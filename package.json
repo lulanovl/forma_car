@@ -2,7 +2,16 @@
   "name": "formacar",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd frontend && npm install --include=dev && npm run build && cd ../backend && npm install",
-    "start": "cd backend && npm run setup && node src/app.js"
+    "dev": "cd backend && npm run dev",
+    "build": "cd frontend && npm install --include=dev && npm run build",
+    "start": "cd backend && node src/app.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "pg": "^8.11.0"
   }
 }
