@@ -46,6 +46,14 @@ export default function App() {
     return () => source.close();
   }, [view]);
 
+  // Open CRM when navigated to /#crm
+  useEffect(() => {
+    if (window.location.hash === '#crm') {
+      window.location.hash = '';
+      handleCrmClick();
+    }
+  }, []);
+
   // Listen for auth expiry from API client
   useEffect(() => {
     const handler = () => {
@@ -78,7 +86,7 @@ export default function App() {
   return (
     <>
       {view === 'site' && (
-        <SitePage onCrmClick={handleCrmClick} />
+        <SitePage />
       )}
       {view === 'crm' && (
         <CrmPage

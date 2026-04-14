@@ -31,7 +31,7 @@ function CountUp({ to, decimals = 0, suffix = '', duration = 1800 }) {
   return <span ref={spanRef}>{display}{suffix}</span>;
 }
 
-export default function SitePage({ onCrmClick }) {
+export default function SitePage() {
   const [preSelectService, setPreSelectService] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -65,7 +65,6 @@ export default function SitePage({ onCrmClick }) {
           <li><a onClick={() => scrollTo('contact')}>Контакты</a></li>
         </ul>
         <div className="nav-right">
-          <button className="btn-crm" onClick={onCrmClick}>⚙ Панель</button>
           <button className="btn-nav" onClick={() => scrollToBooking()}>Записаться</button>
           <button
             className="nav-burger"
@@ -86,7 +85,6 @@ export default function SitePage({ onCrmClick }) {
           <a onClick={() => scrollToBooking()}>Запись</a>
           <a onClick={() => scrollTo('why')}>О нас</a>
           <a onClick={() => scrollTo('contact')}>Контакты</a>
-          <a onClick={() => { setMenuOpen(false); onCrmClick(); }} className="mobile-menu-crm">⚙ CRM Панель</a>
         </div>
       )}
       {menuOpen && <div className="mobile-menu-overlay" onClick={() => setMenuOpen(false)} />}
