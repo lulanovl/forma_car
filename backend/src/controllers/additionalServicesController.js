@@ -27,12 +27,13 @@ exports.create = async (req, res, next) => {
     const { name, price, is_from_price, duration_min, order_num } = req.body;
     if (!name || price === undefined) return res.status(400).json({ error: 'name и price обязательны' });
     const maxOrder = await db('additional_services').max('order_num as m').first();
-    const [id] = await db('additional_services').insert({
+    const [result] = await db('additional_services').insert({
       name, price, is_from_price: is_from_price || false,
       duration_min: duration_min || 0,
       is_active: true,
       order_num: order_num || (maxOrder.m || 0) + 1,
-    });
+    }).returning('id');
+    const id = result?.id ?? result;
     res.status(201).json(await db('additional_services').where({ id }).first());
   } catch (err) {
     next(err);

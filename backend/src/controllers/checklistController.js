@@ -21,12 +21,13 @@ exports.createItem = async (req, res, next) => {
     }
 
     const maxOrder = await db('checklist_items').max('order_num as m').first();
-    const [id] = await db('checklist_items').insert({
+    const [result] = await db('checklist_items').insert({
       title,
       category,
       order_num: order_num || (maxOrder.m || 0) + 1,
       is_active: true,
-    });
+    }).returning('id');
+    const id = result?.id ?? result;
 
     const item = await db('checklist_items').where({ id }).first();
     res.status(201).json(item);

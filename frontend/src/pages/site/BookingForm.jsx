@@ -25,12 +25,10 @@ export default function BookingForm({ preSelectService = null }) {
   const [plate, setPlate] = useState('');
 
   function handlePhoneChange(e) {
-    let val = e.target.value;
-    if (!val.startsWith('+996')) {
-      const digits = val.replace(/\D/g, '');
-      val = '+996' + digits;
-    }
-    setPhone(val);
+    const val = e.target.value;
+    if (!val.startsWith('+996')) return; // prefix broken — React restores previous value
+    const suffix = val.slice(4).replace(/\D/g, '');
+    setPhone('+996' + suffix);
   }
   const [note, setNote] = useState('');
 

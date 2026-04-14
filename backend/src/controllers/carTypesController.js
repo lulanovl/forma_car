@@ -26,7 +26,8 @@ exports.create = async (req, res, next) => {
   try {
     const { name, icon, order_num } = req.body;
     if (!name) return res.status(400).json({ error: 'name обязателен' });
-    const [id] = await db('car_types').insert({ name, icon: icon || '', order_num: order_num || 0 });
+    const [result] = await db('car_types').insert({ name, icon: icon || '', order_num: order_num || 0 }).returning('id');
+    const id = result?.id ?? result;
     res.status(201).json(await db('car_types').where({ id }).first());
   } catch (err) {
     next(err);

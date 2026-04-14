@@ -55,12 +55,13 @@ exports.create = async (req, res, next) => {
   try {
     const { name, description, duration_min, is_active } = req.body;
     if (!name) return res.status(400).json({ error: 'Название обязательно' });
-    const [id] = await db('services').insert({
+    const [result] = await db('services').insert({
       name, description: description || '',
       duration_min: duration_min || 60,
       price_som: 0,
       is_active: is_active !== undefined ? is_active : true,
-    });
+    }).returning('id');
+    const id = result?.id ?? result;
     const svc = await db('services').where({ id }).first();
     res.status(201).json({ ...svc, pricing: [] });
   } catch (err) {

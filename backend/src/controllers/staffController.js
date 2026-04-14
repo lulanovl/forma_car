@@ -20,12 +20,13 @@ exports.create = async (req, res, next) => {
     const { name, role, initials, status } = req.body;
     if (!name) return res.status(400).json({ error: 'Имя обязательно' });
 
-    const [id] = await db('staff').insert({
+    const [result] = await db('staff').insert({
       name,
       role: role || 'Мастер',
       initials: initials || autoInitials(name),
       status: status || 'working',
-    });
+    }).returning('id');
+    const id = result?.id ?? result;
 
     const member = await db('staff').where({ id }).first();
     res.status(201).json(member);

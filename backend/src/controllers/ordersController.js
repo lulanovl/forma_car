@@ -84,7 +84,7 @@ exports.create = async (req, res, next) => {
         const { cnt: total } = await trx('orders').count('id as cnt').first();
         const order_number = generateOrderNumber(Number(total));
 
-        const [id] = await trx('orders').insert({
+        const [result] = await trx('orders').insert({
           order_number,
           client_name, client_phone, client_car,
           service_id,  service_name: service.name,
@@ -96,7 +96,8 @@ exports.create = async (req, res, next) => {
           additional_service_ids: JSON.stringify(additional_service_ids),
           note: note || '',
           plate_number: plate_number || null,
-        });
+        }).returning('id');
+        const id = result?.id ?? result; // pg returns {id:X}, sqlite returns X
 
         await upsertClient(trx, { client_name, client_phone, client_car, plate_number, date });
         return trx('orders').where({ id }).first();
@@ -166,7 +167,7 @@ exports.createAdmin = async (req, res, next) => {
         const { cnt: total } = await trx('orders').count('id as cnt').first();
         const order_number = generateOrderNumber(Number(total));
 
-        const [id] = await trx('orders').insert({
+        const [result] = await trx('orders').insert({
           order_number,
           client_name, client_phone, client_car,
           service_id,  service_name: service.name,
@@ -179,7 +180,8 @@ exports.createAdmin = async (req, res, next) => {
           note: note || '',
           staff_id: staff_id || null,
           plate_number: plate_number || null,
-        });
+        }).returning('id');
+        const id = result?.id ?? result; // pg returns {id:X}, sqlite returns X
 
         await upsertClient(trx, { client_name, client_phone, client_car, plate_number, date });
         return trx('orders').where({ id }).first();
