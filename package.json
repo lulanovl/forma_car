@@ -1,0 +1,8 @@
+{
+  "name": "formacar",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd frontend && npm install --include=dev && npm run build && cd ../backend && npm install",
+    "start": "cd backend && npm run setup && node src/app.js"
+  }
+}

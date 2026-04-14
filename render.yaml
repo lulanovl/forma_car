@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: formacar
+    env: node
+    plan: free
+    buildCommand: cd frontend && npm install --include=dev && npm run build && cd ../backend && npm install
+    startCommand: cd backend && npm run setup && node src/app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_PASSWORD
+        value: formacar2025
+      - key: JWT_SECRET
+        generateValue: true
