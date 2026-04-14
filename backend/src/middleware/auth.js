@@ -19,7 +19,7 @@ function auth(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'formacar_secret_change_in_production');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.admin = true;
     req.adminData = decoded;
     next();

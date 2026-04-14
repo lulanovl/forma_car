@@ -1,14 +1,21 @@
 require('dotenv').config();
 
-const express = require('express');
-const cors    = require('cors');
+const express    = require('express');
+const cors       = require('cors');
+const helmet     = require('helmet');
 
 const routes       = require('./routes/index');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-app.use(cors({ origin: true, credentials: true }));
+// Security headers (X-Frame-Options, X-Content-Type-Options, HSTS, etc.)
+app.use(helmet());
+
+// Restrict CORS to the configured client origin only
+const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+app.use(cors({ origin: allowedOrigin, credentials: true }));
+
 app.use(express.json());
 
 app.use('/api', routes);

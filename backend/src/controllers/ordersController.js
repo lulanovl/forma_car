@@ -55,6 +55,11 @@ exports.create = async (req, res, next) => {
       return res.status(400).json({ error: 'Заполните все обязательные поля' });
     }
 
+    if (!Array.isArray(additional_service_ids) ||
+        !additional_service_ids.every(id => Number.isInteger(id) && id > 0)) {
+      return res.status(400).json({ error: 'Некорректный список дополнительных услуг' });
+    }
+
     const service = await db('services').where({ id: service_id, is_active: true }).first();
     if (!service) return res.status(404).json({ error: 'Услуга не найдена' });
 
@@ -138,6 +143,11 @@ exports.createAdmin = async (req, res, next) => {
 
     if (!client_name || !client_phone || !client_car || !service_id || !car_type_id || !date || !time_slot) {
       return res.status(400).json({ error: 'Заполните все обязательные поля' });
+    }
+
+    if (!Array.isArray(additional_service_ids) ||
+        !additional_service_ids.every(id => Number.isInteger(id) && id > 0)) {
+      return res.status(400).json({ error: 'Некорректный список дополнительных услуг' });
     }
 
     const service = await db('services').where({ id: service_id }).first();
