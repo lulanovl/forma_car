@@ -15,10 +15,21 @@ const devConfig = {
   },
 };
 
+const stripSslMode = (url) => {
+  if (!url) return undefined;
+  try {
+    const u = new URL(url);
+    u.searchParams.delete('sslmode');
+    return u.toString();
+  } catch {
+    return url;
+  }
+};
+
 const prodConfig = {
   client: 'pg',
   connection: {
-    connectionString: process.env.DATABASE_URL,
+    connectionString: stripSslMode(process.env.DATABASE_URL),
     ssl: { rejectUnauthorized: false },
   },
   migrations: {
