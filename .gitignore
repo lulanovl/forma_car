@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+.env.local
+*.local
+
+# Database
+*.db
+data/
+
+# Build output
+frontend/dist/
+.vercel/
+
+# Editor / tooling
+.claude/settings.local.json
+.DS_Store
+
+# Temp / debug artifacts
+*.log
+tmp_*
+curl_err.txt
