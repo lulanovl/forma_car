@@ -1,5 +1,8 @@
 import { api } from './client.js';
 
+// Public site config (branding, contacts) for the current carwash
+export const getCarwashConfig = () => api.get('/public/config');
+
 // Auth
 export const login = (loginName, password) => api.post('/auth/login', { login: loginName, password });
 

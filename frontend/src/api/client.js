@@ -1,10 +1,17 @@
 import { getToken, clearToken } from '../utils/auth.js';
+import { getCarwashSlug } from '../utils/tenant.js';
 
 const BASE = '/api';
 
 async function request(path, options = {}) {
   const token = getToken();
-  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  const headers = {
+    'Content-Type': 'application/json',
+    // Tells the backend which carwash this site belongs to (public routes).
+    // Admin routes still take the tenant from the JWT, so this is harmless there.
+    'x-carwash-slug': getCarwashSlug(),
+    ...options.headers,
+  };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
   const res = await fetch(BASE + path, { ...options, headers });

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.use('/auth',                require('./auth'));
+router.use('/public',              require('./public'));
 router.use('/services',            require('./services'));
 router.use('/car-types',           require('./car-types'));
 router.use('/additional-services', require('./additional-services'));

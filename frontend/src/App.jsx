@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getToken, isAuthenticated } from './utils/auth.js';
+import { getCarwashConfig } from './api/index.js';
 import { toastInfo, toastError } from './components/toast.js';
 import SitePage from './pages/site/SitePage.jsx';
 import CrmPage from './pages/crm/CrmPage.jsx';
@@ -18,6 +19,17 @@ export default function App() {
   const [newOrderOpen, setNewOrderOpen] = useState(false);
   const [checklistOrderId, setChecklistOrderId] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [siteConfig, setSiteConfig] = useState(null);
+
+  // Load this carwash's public config (branding/contacts) once on mount
+  useEffect(() => {
+    getCarwashConfig()
+      .then((cfg) => {
+        setSiteConfig(cfg);
+        if (cfg?.name) document.title = cfg.name;
+      })
+      .catch(() => { /* fall back to built-in defaults in SitePage */ });
+  }, []);
 
   // Persist navigation state across reloads
   useEffect(() => { sessionStorage.setItem('fc_view', view); }, [view]);
@@ -86,7 +98,7 @@ export default function App() {
   return (
     <>
       {view === 'site' && (
-        <SitePage />
+        <SitePage config={siteConfig} />
       )}
       {view === 'crm' && (
         <CrmPage
