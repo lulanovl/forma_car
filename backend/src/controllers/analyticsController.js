@@ -20,7 +20,8 @@ exports.getData = async (req, res, next) => {
 
     // All orders in the selected month
     const orders = await db('orders')
-      .where('date', 'like', `${prefix}%`)
+      .where({ carwash_id: req.carwashId })
+      .andWhere('date', 'like', `${prefix}%`)
       .select('id', 'date', 'status', 'service_name', 'price_snapshot', 'extras_price', 'final_price');
 
     const doneOrders = orders.filter(o => o.status === 'done');

@@ -4,7 +4,7 @@ const db = require('../db/knex');
 exports.getItems = async (req, res, next) => {
   try {
     const items = await db('checklist_items')
-      .where({ is_active: true })
+      .where({ is_active: true, carwash_id: req.carwashId })
       .orderBy('order_num');
     res.json(items);
   } catch (err) {
@@ -20,8 +20,12 @@ exports.createItem = async (req, res, next) => {
       return res.status(400).json({ error: 'title и category обязательны' });
     }
 
-    const maxOrder = await db('checklist_items').max('order_num as m').first();
+    const maxOrder = await db('checklist_items')
+      .where({ carwash_id: req.carwashId })
+      .max('order_num as m')
+      .first();
     const [result] = await db('checklist_items').insert({
+      carwash_id: req.carwashId,
       title,
       category,
       order_num: order_num || (maxOrder.m || 0) + 1,
@@ -48,9 +52,9 @@ exports.updateItem = async (req, res, next) => {
     if (order_num !== undefined) updates.order_num = order_num;
     if (is_active !== undefined) updates.is_active = is_active;
 
-    await db('checklist_items').where({ id }).update(updates);
-    const item = await db('checklist_items').where({ id }).first();
-    if (!item) return res.status(404).json({ error: 'Пункт не найден' });
+    const changed = await db('checklist_items').where({ id, carwash_id: req.carwashId }).update(updates);
+    if (!changed) return res.status(404).json({ error: 'Пункт не найден' });
+    const item = await db('checklist_items').where({ id, carwash_id: req.carwashId }).first();
     res.json(item);
   } catch (err) {
     next(err);
@@ -61,19 +65,22 @@ exports.updateItem = async (req, res, next) => {
 exports.deleteItem = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await db('checklist_items').where({ id }).update({ is_active: false });
+    await db('checklist_items').where({ id, carwash_id: req.carwashId }).update({ is_active: false });
     res.json({ success: true });
   } catch (err) {
     next(err);
   }
 };
 
-// Внутренняя функция: инициализировать чек-лист для заказа
-async function ensureOrderChecklist(orderId, trx = db) {
+// Внутренняя функция: инициализировать чек-лист для заказа.
+// Берёт только пункты той автомойки, которой принадлежит заказ.
+async function ensureOrderChecklist(orderId, carwashId, trx = db) {
   const existing = await trx('order_checklist').where({ order_id: orderId }).first();
   if (existing) return; // уже инициализирован
 
-  const items = await trx('checklist_items').where({ is_active: true }).orderBy('order_num');
+  const items = await trx('checklist_items')
+    .where({ is_active: true, carwash_id: carwashId })
+    .orderBy('order_num');
   if (!items.length) return;
 
   const rows = items.map((item) => ({
@@ -90,10 +97,10 @@ exports.initOrderChecklist = async (req, res, next) => {
   try {
     const { orderId } = req.params;
 
-    const order = await db('orders').where({ id: orderId }).first();
+    const order = await db('orders').where({ id: orderId, carwash_id: req.carwashId }).first();
     if (!order) return res.status(404).json({ error: 'Заказ не найден' });
 
-    await ensureOrderChecklist(orderId);
+    await ensureOrderChecklist(orderId, req.carwashId);
     res.json({ success: true });
   } catch (err) {
     next(err);
@@ -105,10 +112,10 @@ exports.getOrderChecklist = async (req, res, next) => {
   try {
     const { orderId } = req.params;
 
-    const order = await db('orders').where({ id: orderId }).first();
+    const order = await db('orders').where({ id: orderId, carwash_id: req.carwashId }).first();
     if (!order) return res.status(404).json({ error: 'Заказ не найден' });
 
-    await ensureOrderChecklist(orderId);
+    await ensureOrderChecklist(orderId, req.carwashId);
 
     const rows = await db('order_checklist')
       .join('checklist_items', 'order_checklist.checklist_item_id', 'checklist_items.id')
@@ -158,7 +165,7 @@ exports.updateOrderChecklist = async (req, res, next) => {
       return res.status(400).json({ error: 'items должен быть непустым массивом' });
     }
 
-    const order = await db('orders').where({ id: orderId }).first();
+    const order = await db('orders').where({ id: orderId, carwash_id: req.carwashId }).first();
     if (!order) return res.status(404).json({ error: 'Заказ не найден' });
 
     await db.transaction(async (trx) => {

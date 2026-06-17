@@ -4,7 +4,7 @@ const db = require('../db/knex');
 exports.getAll = async (req, res, next) => {
   try {
     const services = await db('additional_services')
-      .where({ is_active: true })
+      .where({ is_active: true, carwash_id: req.carwashId })
       .orderBy('order_num');
     res.json(services);
   } catch (err) {
@@ -15,7 +15,7 @@ exports.getAll = async (req, res, next) => {
 // GET /api/additional-services/all — admin (включая неактивные)
 exports.getAllAdmin = async (req, res, next) => {
   try {
-    res.json(await db('additional_services').orderBy('order_num'));
+    res.json(await db('additional_services').where({ carwash_id: req.carwashId }).orderBy('order_num'));
   } catch (err) {
     next(err);
   }
@@ -26,8 +26,12 @@ exports.create = async (req, res, next) => {
   try {
     const { name, price, is_from_price, duration_min, order_num } = req.body;
     if (!name || price === undefined) return res.status(400).json({ error: 'name и price обязательны' });
-    const maxOrder = await db('additional_services').max('order_num as m').first();
+    const maxOrder = await db('additional_services')
+      .where({ carwash_id: req.carwashId })
+      .max('order_num as m')
+      .first();
     const [result] = await db('additional_services').insert({
+      carwash_id: req.carwashId,
       name, price, is_from_price: is_from_price || false,
       duration_min: duration_min || 0,
       is_active: true,
@@ -52,8 +56,9 @@ exports.update = async (req, res, next) => {
     if (duration_min !== undefined) upd.duration_min = duration_min;
     if (is_active !== undefined) upd.is_active = is_active;
     if (order_num !== undefined) upd.order_num = order_num;
-    await db('additional_services').where({ id }).update(upd);
-    res.json(await db('additional_services').where({ id }).first());
+    const updated = await db('additional_services').where({ id, carwash_id: req.carwashId }).update(upd);
+    if (!updated) return res.status(404).json({ error: 'Услуга не найдена' });
+    res.json(await db('additional_services').where({ id, carwash_id: req.carwashId }).first());
   } catch (err) {
     next(err);
   }
@@ -62,7 +67,9 @@ exports.update = async (req, res, next) => {
 // DELETE /api/additional-services/:id (admin)
 exports.remove = async (req, res, next) => {
   try {
-    await db('additional_services').where({ id: req.params.id }).update({ is_active: false });
+    await db('additional_services')
+      .where({ id: req.params.id, carwash_id: req.carwashId })
+      .update({ is_active: false });
     res.json({ success: true });
   } catch (err) {
     next(err);

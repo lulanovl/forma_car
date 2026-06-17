@@ -4,8 +4,9 @@ const express    = require('express');
 const cors       = require('cors');
 const helmet     = require('helmet');
 
-const routes       = require('./routes/index');
-const errorHandler = require('./middleware/errorHandler');
+const routes        = require('./routes/index');
+const resolveTenant = require('./middleware/resolveTenant');
+const errorHandler  = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -17,6 +18,10 @@ const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
 app.use(cors({ origin: allowedOrigin, credentials: true }));
 
 app.use(express.json());
+
+// Resolve the carwash tenant (from subdomain / header / query) for every API
+// request. Admin routes override req.carwashId from the JWT inside `auth`.
+app.use('/api', resolveTenant);
 
 app.use('/api', routes);
 
