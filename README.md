@@ -88,8 +88,10 @@ cd ../frontend && npm install
 cp backend/.env.example backend/.env
 #   задать ADMIN_PASSWORD и JWT_SECRET
 
-# 3. Инициализация БД (миграции + сиды)
-cd backend && npm run setup
+# 3. Инициализация БД
+cd backend && npm run setup   # миграции + bootstrap: мойка №1 + учётки (owner, formacar)
+npm run seed                  # ТОЛЬКО на свежей БД: залить дефолтный каталог (услуги, цены, чек-лист, слоты)
+#   ⚠️ npm run seed перезаписывает каталог — не запускать на боевой БД с правками
 
 # 4. Запуск
 #   Windows — из корня:
@@ -99,7 +101,7 @@ cd backend  && npm run dev   # → http://localhost:3001
 cd frontend && npm run dev   # → http://localhost:5173
 ```
 
-Открыть `http://localhost:5173`. Вход в CRM: кнопка **«⚙ Панель»** → пароль из `.env`.
+Открыть `http://localhost:5173`. Вход в CRM: кнопка **«⚙ Панель»** → логин + пароль (по умолчанию `formacar` / значение `ADMIN_PASSWORD`). Владелец платформы — логин `owner`.
 
 ---
 

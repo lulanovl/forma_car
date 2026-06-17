@@ -9,7 +9,8 @@
     "migrate": "knex migrate:latest --knexfile knexfile.js",
     "migrate:rollback": "knex migrate:rollback --knexfile knexfile.js",
     "seed": "knex seed:run --knexfile knexfile.js",
-    "setup": "node -e \"require('fs').mkdirSync('data',{recursive:true})\" && npm run migrate && npm run seed"
+    "seed:bootstrap": "knex seed:run --specific=00_carwashes.js --knexfile knexfile.js",
+    "setup": "node -e \"require('fs').mkdirSync('data',{recursive:true})\" && npm run migrate && npm run seed:bootstrap"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
