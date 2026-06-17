@@ -11,6 +11,7 @@ function publicCarwash(c) {
     id: c.id, slug: c.slug, name: c.name,
     primary_color: c.primary_color, accent_color: c.accent_color,
     checklist_enabled: !!c.checklist_enabled, is_active: !!c.is_active,
+    is_default: c.slug === DEFAULT_SLUG, // can't be deactivated (login fallback)
     created_at: c.created_at,
   };
 }

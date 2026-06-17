@@ -121,13 +121,22 @@ export default function PlatformPage({ onBackSite, onLogout }) {
                   <td>{c.order_count}</td>
                   <td>{c.admin_count}</td>
                   <td>
-                    <button
-                      className="crm-btn"
-                      style={{ width: 'auto', padding: '.3rem .7rem', color: c.is_active ? 'var(--red)' : 'var(--gray)' }}
-                      onClick={() => toggleActive(c)}
-                    >
-                      {c.is_active ? '● Активна' : '○ Выключена'}
-                    </button>
+                    {c.is_default ? (
+                      <span
+                        title="Мойка по умолчанию — на неё завязан вход без поддомена, выключить нельзя"
+                        style={{ color: 'var(--gray)', fontSize: '.85rem', cursor: 'default' }}
+                      >
+                        ● Активна (по умолчанию)
+                      </span>
+                    ) : (
+                      <button
+                        className="crm-btn"
+                        style={{ width: 'auto', padding: '.3rem .7rem', color: c.is_active ? 'var(--red)' : 'var(--gray)' }}
+                        onClick={() => toggleActive(c)}
+                      >
+                        {c.is_active ? '● Активна' : '○ Выключена'}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
