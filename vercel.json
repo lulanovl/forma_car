@@ -5,6 +5,7 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index" },
-    { "source": "/crm", "destination": "/index.html" }
+    { "source": "/crm", "destination": "/index.html" },
+    { "source": "/m/:slug", "destination": "/index.html" }
   ]
 }

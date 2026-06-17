@@ -81,11 +81,13 @@ export default function App() {
     if (!isAuthenticated()) setLoginOpen(true);
   }, []);
 
-  // Keep the address bar in sync with the view: /crm for any admin view, / on the site.
+  // Keep the address bar in sync with the view. Admin views use /crm; on the site
+  // we leave a tenant path (/m/<slug>) intact and only strip a lingering /crm.
   useEffect(() => {
-    const target = view === 'site' ? '/' : '/crm';
-    if (window.location.pathname !== target) {
-      window.history.replaceState(null, '', target);
+    if (view === 'site') {
+      if (window.location.pathname === '/crm') window.history.replaceState(null, '', '/');
+    } else if (window.location.pathname !== '/crm') {
+      window.history.replaceState(null, '', '/crm');
     }
   }, [view]);
 
