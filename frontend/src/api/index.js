@@ -61,6 +61,11 @@ export const updateOrderChecklist      = (orderId, items, checked_by) =>
 export const getSettings    = ()     => api.get('/settings');
 export const updateSettings = (data) => api.patch('/settings', data);
 
+// Platform owner (super admin) — manage all carwashes
+export const getCarwashes       = ()         => api.get('/admin/carwashes');
+export const createCarwash      = (data)     => api.post('/admin/carwashes', data);
+export const updateCarwashAdmin = (id, data) => api.patch(`/admin/carwashes/${id}`, data);
+
 function toQuery(params) {
   if (!params) return '';
   const q = Object.entries(params)

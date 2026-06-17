@@ -14,8 +14,8 @@ export default function LoginModal({ onClose, onSuccess }) {
     setLoading(true);
     setError('');
     try {
-      const { token } = await login(loginName, password);
-      saveToken(token);
+      const { token, user } = await login(loginName, password);
+      saveToken(token, user);
       toastSuccess('Добро пожаловать в CRM');
       onSuccess();
     } catch {
