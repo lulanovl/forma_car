@@ -23,16 +23,19 @@ exports.getData = async (req, res, next) => {
     const today = new Date().toISOString().split('T')[0];
     const weekDates = getWeekDates();
 
+    const cw = req.carwashId;
+
     // KPI
-    const [todayOrdersRow] = await db('orders').where({ date: today }).count('id as cnt');
-    const [pendingRow] = await db('orders').where({ status: 'new' }).count('id as cnt');
-    const [totalClientsRow] = await db('clients').count('id as cnt');
+    const [todayOrdersRow] = await db('orders').where({ date: today, carwash_id: cw }).count('id as cnt');
+    const [pendingRow] = await db('orders').where({ status: 'new', carwash_id: cw }).count('id as cnt');
+    const [totalClientsRow] = await db('clients').where({ carwash_id: cw }).count('id as cnt');
     const [revenueRow] = await db('orders')
-      .where({ date: today, status: 'done' })
+      .where({ date: today, status: 'done', carwash_id: cw })
       .select(db.raw('SUM(CASE WHEN final_price IS NOT NULL THEN final_price ELSE COALESCE(price_snapshot, 0) + COALESCE(extras_price, 0) END) as total'));
 
     // График недели
     const weekOrdersRaw = await db('orders')
+      .where({ carwash_id: cw })
       .whereIn('date', weekDates)
       .select('date')
       .count('id as cnt')
@@ -50,12 +53,12 @@ exports.getData = async (req, res, next) => {
 
     // Заказы сегодня
     const todayOrders = await db('orders')
-      .where({ date: today })
+      .where({ date: today, carwash_id: cw })
       .orderBy('time_slot')
       .select('*');
 
     // Персонал
-    const staff = await db('staff').orderBy('id');
+    const staff = await db('staff').where({ carwash_id: cw }).orderBy('id');
 
     res.json({
       today_orders_count: Number(todayOrdersRow.cnt),

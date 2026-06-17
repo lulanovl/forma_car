@@ -6,7 +6,7 @@ const { subscribe } = require('../events');
 // GET /api/events — SSE stream for admin panel
 // Token passed as ?token= because EventSource cannot set headers
 router.get('/', auth, (req, res) => {
-  const unsubscribe = subscribe(res);
+  const unsubscribe = subscribe(req.carwashId, res);
   req.on('close', unsubscribe);
 });
 

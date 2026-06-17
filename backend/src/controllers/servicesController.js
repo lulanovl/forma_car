@@ -33,7 +33,9 @@ async function attachPricing(services) {
 // GET /api/services — публичный, только активные + цены
 exports.getPublic = async (req, res, next) => {
   try {
-    const services = await db('services').where({ is_active: true }).orderBy('id');
+    const services = await db('services')
+      .where({ is_active: true, carwash_id: req.carwashId })
+      .orderBy('id');
     res.json(await attachPricing(services));
   } catch (err) {
     next(err);
@@ -43,7 +45,7 @@ exports.getPublic = async (req, res, next) => {
 // GET /api/services/all — admin, все + цены
 exports.getAll = async (req, res, next) => {
   try {
-    const services = await db('services').orderBy('id');
+    const services = await db('services').where({ carwash_id: req.carwashId }).orderBy('id');
     res.json(await attachPricing(services));
   } catch (err) {
     next(err);
@@ -56,6 +58,7 @@ exports.create = async (req, res, next) => {
     const { name, description, duration_min, is_active } = req.body;
     if (!name) return res.status(400).json({ error: 'Название обязательно' });
     const [result] = await db('services').insert({
+      carwash_id: req.carwashId,
       name, description: description || '',
       duration_min: duration_min || 60,
       price_som: 0,
@@ -75,24 +78,28 @@ exports.update = async (req, res, next) => {
     const { id } = req.params;
     const { name, description, duration_min, is_active, pricing } = req.body;
 
+    // Ensure the service belongs to this carwash before touching anything.
+    const owned = await db('services').where({ id, carwash_id: req.carwashId }).first();
+    if (!owned) return res.status(404).json({ error: 'Услуга не найдена' });
+
     const upd = { updated_at: new Date().toISOString() };
     if (name !== undefined) upd.name = name;
     if (description !== undefined) upd.description = description;
     if (duration_min !== undefined) upd.duration_min = duration_min;
     if (is_active !== undefined) upd.is_active = is_active;
 
-    await db('services').where({ id }).update(upd);
+    await db('services').where({ id, carwash_id: req.carwashId }).update(upd);
 
     // Обновление цен (если переданы)
     if (Array.isArray(pricing)) {
       for (const p of pricing) {
         await db('service_pricing')
-          .where({ service_id: id, car_type_id: p.car_type_id })
+          .where({ service_id: id, car_type_id: p.car_type_id, carwash_id: req.carwashId })
           .update({ price: p.price, is_from_price: p.is_from_price || false });
       }
     }
 
-    const services = await db('services').where({ id });
+    const services = await db('services').where({ id, carwash_id: req.carwashId });
     const result = await attachPricing(services);
     res.json(result[0] || null);
   } catch (err) {
@@ -104,8 +111,8 @@ exports.update = async (req, res, next) => {
 exports.remove = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await db('service_pricing').where({ service_id: id }).delete();
-    const deleted = await db('services').where({ id }).delete();
+    await db('service_pricing').where({ service_id: id, carwash_id: req.carwashId }).delete();
+    const deleted = await db('services').where({ id, carwash_id: req.carwashId }).delete();
     if (!deleted) return res.status(404).json({ error: 'Услуга не найдена' });
     res.json({ success: true });
   } catch (err) {

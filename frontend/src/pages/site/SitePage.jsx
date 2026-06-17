@@ -31,9 +31,16 @@ function CountUp({ to, decimals = 0, suffix = '', duration = 1800 }) {
   return <span ref={spanRef}>{display}{suffix}</span>;
 }
 
-export default function SitePage() {
+export default function SitePage({ config }) {
   const [preSelectService, setPreSelectService] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Per-carwash branding with safe fallbacks to the built-in FormaCar defaults.
+  const brandName = config?.name || 'FormaCar';
+  const heroSubtitle = config?.hero_subtitle
+    || `${brandName} — профессиональный уход за вашим автомобилем. Запишитесь онлайн, выберите удобное время и приезжайте без очереди.`;
+  const phone = config?.phone || '+996 — — —';
+  const address = config?.address || 'Бишкек, Кыргызстан';
 
   function scrollToBooking(svc = null) {
     if (svc) setPreSelectService(svc);
@@ -54,7 +61,7 @@ export default function SitePage() {
       <nav id="main-nav">
         <div className="nav-logo" onClick={() => window.scrollTo(0, 0)}>
           <div>
-            <span><span className="forma">Forma</span>Car</span>
+            <span>{brandName}</span>
             <span className="sub">Premium Car Wash</span>
           </div>
         </div>
@@ -103,7 +110,7 @@ export default function SitePage() {
             <span className="line2">ВЫСОКОГО</span>
             <span className="line3">КЛАССА</span>
           </h1>
-          <p className="hero-sub">FormaCar — профессиональный уход за вашим автомобилем. Запишитесь онлайн, выберите удобное время и приезжайте без очереди.</p>
+          <p className="hero-sub">{heroSubtitle}</p>
           <div className="hero-actions">
             <button className="btn-primary" onClick={() => scrollToBooking()}>Записаться онлайн</button>
             <button className="btn-ghost" onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}>Наши услуги</button>
@@ -216,8 +223,8 @@ export default function SitePage() {
       <footer id="contact">
         <div className="footer-top">
           <div>
-            <span className="footer-logo"><span className="forma">Forma</span>Car</span>
-            <div className="footer-desc">Premium Car Wash в Бишкеке. Профессиональный уход за вашим автомобилем. Запись онлайн — без очередей.</div>
+            <span className="footer-logo">{brandName}</span>
+            <div className="footer-desc">Premium Car Wash. Профессиональный уход за вашим автомобилем. Запись онлайн — без очередей.</div>
           </div>
           <div className="footer-col">
             <div className="footer-col-title">Услуги</div>
@@ -226,15 +233,15 @@ export default function SitePage() {
           <div className="footer-col">
             <div className="footer-col-title">Контакты</div>
             <ul>
-              <li><a href="#">📍 Бишкек, Кыргызстан</a></li>
-              <li><a href="#">📞 +996 — — —</a></li>
+              <li><a href="#">📍 {address}</a></li>
+              <li><a href={phone ? `tel:${phone.replace(/\s/g, '')}` : '#'}>📞 {phone}</a></li>
               <li><a href="#">💬 WhatsApp</a></li>
               <li><a href="#">📷 Instagram</a></li>
             </ul>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>© 2025 <span className="footer-red">FormaCar</span> Premium Car Wash. Все права защищены.</p>
+          <p>© 2025 <span className="footer-red">{brandName}</span> Premium Car Wash. Все права защищены.</p>
         </div>
       </footer>
     </>

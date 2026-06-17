@@ -3,7 +3,7 @@ const db = require('../db/knex');
 // GET /api/car-types — все типы кузова (публичный)
 exports.getAll = async (req, res, next) => {
   try {
-    const carTypes = await db('car_types').orderBy('order_num');
+    const carTypes = await db('car_types').where({ carwash_id: req.carwashId }).orderBy('order_num');
     res.json(carTypes);
   } catch (err) {
     next(err);
@@ -13,7 +13,7 @@ exports.getAll = async (req, res, next) => {
 // GET /api/car-types/:id
 exports.getOne = async (req, res, next) => {
   try {
-    const ct = await db('car_types').where({ id: req.params.id }).first();
+    const ct = await db('car_types').where({ id: req.params.id, carwash_id: req.carwashId }).first();
     if (!ct) return res.status(404).json({ error: 'Тип не найден' });
     res.json(ct);
   } catch (err) {
@@ -26,7 +26,9 @@ exports.create = async (req, res, next) => {
   try {
     const { name, icon, order_num } = req.body;
     if (!name) return res.status(400).json({ error: 'name обязателен' });
-    const [result] = await db('car_types').insert({ name, icon: icon || '', order_num: order_num || 0 }).returning('id');
+    const [result] = await db('car_types')
+      .insert({ carwash_id: req.carwashId, name, icon: icon || '', order_num: order_num || 0 })
+      .returning('id');
     const id = result?.id ?? result;
     res.status(201).json(await db('car_types').where({ id }).first());
   } catch (err) {
@@ -43,8 +45,9 @@ exports.update = async (req, res, next) => {
     if (name !== undefined) upd.name = name;
     if (icon !== undefined) upd.icon = icon;
     if (order_num !== undefined) upd.order_num = order_num;
-    await db('car_types').where({ id }).update(upd);
-    res.json(await db('car_types').where({ id }).first());
+    const updated = await db('car_types').where({ id, carwash_id: req.carwashId }).update(upd);
+    if (!updated) return res.status(404).json({ error: 'Тип не найден' });
+    res.json(await db('car_types').where({ id, carwash_id: req.carwashId }).first());
   } catch (err) {
     next(err);
   }
@@ -53,7 +56,7 @@ exports.update = async (req, res, next) => {
 // DELETE /api/car-types/:id (admin)
 exports.remove = async (req, res, next) => {
   try {
-    await db('car_types').where({ id: req.params.id }).delete();
+    await db('car_types').where({ id: req.params.id, carwash_id: req.carwashId }).delete();
     res.json({ success: true });
   } catch (err) {
     next(err);

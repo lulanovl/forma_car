@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.use('/auth',                require('./auth'));
+router.use('/public',              require('./public'));
 router.use('/services',            require('./services'));
 router.use('/car-types',           require('./car-types'));
 router.use('/additional-services', require('./additional-services'));
@@ -12,6 +13,8 @@ router.use('/checklist',           require('./checklist'));
 router.use('/slots',               require('./slots'));
 router.use('/dashboard',           require('./dashboard'));
 router.use('/analytics',           require('./analytics'));
+router.use('/settings',            require('./settings'));
+router.use('/admin',               require('./platform'));
 router.use('/events',              require('./events'));
 
 module.exports = router;

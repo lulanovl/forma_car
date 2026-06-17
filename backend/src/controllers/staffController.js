@@ -8,7 +8,7 @@ function autoInitials(name) {
 
 exports.getAll = async (req, res, next) => {
   try {
-    const staff = await db('staff').orderBy('id');
+    const staff = await db('staff').where({ carwash_id: req.carwashId }).orderBy('id');
     res.json(staff);
   } catch (err) {
     next(err);
@@ -21,6 +21,7 @@ exports.create = async (req, res, next) => {
     if (!name) return res.status(400).json({ error: 'Имя обязательно' });
 
     const [result] = await db('staff').insert({
+      carwash_id: req.carwashId,
       name,
       role: role || 'Мастер',
       initials: initials || autoInitials(name),
@@ -47,9 +48,9 @@ exports.update = async (req, res, next) => {
     if (status !== undefined) updates.status = status;
     updates.updated_at = new Date().toISOString();
 
-    await db('staff').where({ id }).update(updates);
-    const member = await db('staff').where({ id }).first();
-    if (!member) return res.status(404).json({ error: 'Сотрудник не найден' });
+    const changed = await db('staff').where({ id, carwash_id: req.carwashId }).update(updates);
+    if (!changed) return res.status(404).json({ error: 'Сотрудник не найден' });
+    const member = await db('staff').where({ id, carwash_id: req.carwashId }).first();
 
     res.json(member);
   } catch (err) {
@@ -60,7 +61,7 @@ exports.update = async (req, res, next) => {
 exports.remove = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const deleted = await db('staff').where({ id }).delete();
+    const deleted = await db('staff').where({ id, carwash_id: req.carwashId }).delete();
     if (!deleted) return res.status(404).json({ error: 'Сотрудник не найден' });
     res.json({ success: true });
   } catch (err) {

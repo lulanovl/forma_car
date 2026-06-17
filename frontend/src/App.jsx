@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
-import { getToken, isAuthenticated } from './utils/auth.js';
+import { getToken, isAuthenticated, getRole, clearToken } from './utils/auth.js';
+import { getCarwashConfig } from './api/index.js';
+import { applyTheme } from './utils/theme.js';
 import { toastInfo, toastError } from './components/toast.js';
 import SitePage from './pages/site/SitePage.jsx';
 import CrmPage from './pages/crm/CrmPage.jsx';
 import ChecklistView from './pages/crm/ChecklistView.jsx';
+import PlatformPage from './pages/platform/PlatformPage.jsx';
 import LoginModal from './components/LoginModal.jsx';
 import NewOrderModal from './components/NewOrderModal.jsx';
+
+// Where an authenticated user lands: platform owners get the super-admin, others the CRM.
+function homeViewForRole() {
+  return getRole() === 'platform_owner' ? 'platform' : 'crm';
+}
 
 export default function App() {
   const [view, setView] = useState(() => {
     const saved = sessionStorage.getItem('fc_view');
-    if (saved === 'crm' && isAuthenticated()) return 'crm';
+    if ((saved === 'crm' || saved === 'platform') && isAuthenticated()) return homeViewForRole();
     return 'site';
   });
   const [crmPanel, setCrmPanel] = useState(() => sessionStorage.getItem('fc_panel') || 'dash');
@@ -18,6 +26,18 @@ export default function App() {
   const [newOrderOpen, setNewOrderOpen] = useState(false);
   const [checklistOrderId, setChecklistOrderId] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [siteConfig, setSiteConfig] = useState(null);
+
+  // Load this carwash's public config (branding/contacts) once on mount
+  useEffect(() => {
+    getCarwashConfig()
+      .then((cfg) => {
+        setSiteConfig(cfg);
+        applyTheme(cfg);
+        if (cfg?.name) document.title = cfg.name;
+      })
+      .catch(() => { /* fall back to built-in defaults in SitePage */ });
+  }, []);
 
   // Persist navigation state across reloads
   useEffect(() => { sessionStorage.setItem('fc_view', view); }, [view]);
@@ -67,10 +87,16 @@ export default function App() {
 
   function handleCrmClick() {
     if (isAuthenticated()) {
-      setView('crm');
+      setView(homeViewForRole());
     } else {
       setLoginOpen(true);
     }
+  }
+
+  function handleLogout() {
+    clearToken();
+    sessionStorage.removeItem('fc_view');
+    setView('site');
   }
 
   function handleOpenChecklist(orderId) {
@@ -86,7 +112,7 @@ export default function App() {
   return (
     <>
       {view === 'site' && (
-        <SitePage />
+        <SitePage config={siteConfig} />
       )}
       {view === 'crm' && (
         <CrmPage
@@ -105,10 +131,16 @@ export default function App() {
           onBack={handleChecklistBack}
         />
       )}
+      {view === 'platform' && (
+        <PlatformPage
+          onBackSite={() => setView('site')}
+          onLogout={handleLogout}
+        />
+      )}
       {loginOpen && (
         <LoginModal
           onClose={() => setLoginOpen(false)}
-          onSuccess={() => { setLoginOpen(false); setView('crm'); }}
+          onSuccess={() => { setLoginOpen(false); setView(homeViewForRole()); }}
         />
       )}
       {newOrderOpen && (

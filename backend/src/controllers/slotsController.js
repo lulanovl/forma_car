@@ -7,10 +7,12 @@ exports.getAvailable = async (req, res, next) => {
     const { date } = req.query;
     if (!date) return res.status(400).json({ error: 'Параметр date обязателен (YYYY-MM-DD)' });
 
-    const slots = await db('time_slots').where({ is_active: true }).orderBy('time');
+    const slots = await db('time_slots')
+      .where({ is_active: true, carwash_id: req.carwashId })
+      .orderBy('time');
 
     const orders = await db('orders')
-      .where({ date })
+      .where({ date, carwash_id: req.carwashId })
       .whereNotIn('status', ['rejected', 'no_show'])
       .select('time_slot');
 
