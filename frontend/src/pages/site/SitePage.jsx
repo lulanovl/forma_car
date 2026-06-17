@@ -123,23 +123,23 @@ export default function SitePage({ config }) {
                 <stop offset="0%" stopColor="#555"/><stop offset="50%" stopColor="#e0e0e0"/><stop offset="100%" stopColor="#333"/>
               </linearGradient>
               <linearGradient id="redLine" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="transparent"/><stop offset="40%" stopColor="#d42b2b"/><stop offset="100%" stopColor="#d42b2b"/>
+                <stop offset="0%" stopColor="transparent"/><stop offset="40%" style={{ stopColor: 'rgb(var(--accent2-rgb))' }}/><stop offset="100%" style={{ stopColor: 'rgb(var(--accent2-rgb))' }}/>
               </linearGradient>
               <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
             </defs>
-            <ellipse cx="450" cy="370" rx="380" ry="18" fill="rgba(212,43,43,0.12)"/>
+            <ellipse cx="450" cy="370" rx="380" ry="18" style={{ fill: 'rgba(var(--accent2-rgb), 0.12)' }}/>
             <path d="M80,300 L80,240 Q100,200 160,180 L300,155 Q380,100 480,95 Q580,90 640,110 L760,150 Q820,165 840,200 L850,240 L850,300 Z" fill="url(#carGrad)" opacity="0.9"/>
             <path d="M280,158 Q340,95 460,88 Q560,82 620,108 L750,148 Q680,145 620,140 Q520,130 440,125 Q360,118 280,158Z" fill="#c0c0c0" opacity="0.7"/>
-            <path d="M310,160 Q340,105 420,100 L490,100 L500,158Z" fill="rgba(212,43,43,0.25)" stroke="rgba(212,43,43,0.4)" strokeWidth="1"/>
-            <path d="M510,158 L508,100 Q575,96 630,115 L700,148Z" fill="rgba(212,43,43,0.2)" stroke="rgba(212,43,43,0.35)" strokeWidth="1"/>
+            <path d="M310,160 Q340,105 420,100 L490,100 L500,158Z" style={{ fill: 'rgba(var(--accent2-rgb), 0.25)', stroke: 'rgba(var(--accent2-rgb), 0.4)' }} strokeWidth="1"/>
+            <path d="M510,158 L508,100 Q575,96 630,115 L700,148Z" style={{ fill: 'rgba(var(--accent2-rgb), 0.2)', stroke: 'rgba(var(--accent2-rgb), 0.35)' }} strokeWidth="1"/>
             <path d="M80,255 L850,255" stroke="url(#redLine)" strokeWidth="2.5" filter="url(#glow)"/>
             <circle cx="220" cy="305" r="55" fill="#1a1a1a" stroke="#333" strokeWidth="3"/>
-            <circle cx="220" cy="305" r="32" fill="#222" stroke="#d42b2b" strokeWidth="1.5"/>
+            <circle cx="220" cy="305" r="32" fill="#222" style={{ stroke: 'rgb(var(--accent2-rgb))' }} strokeWidth="1.5"/>
             <circle cx="220" cy="305" r="10" fill="#111"/>
             <circle cx="680" cy="305" r="55" fill="#1a1a1a" stroke="#333" strokeWidth="3"/>
-            <circle cx="680" cy="305" r="32" fill="#222" stroke="#d42b2b" strokeWidth="1.5"/>
+            <circle cx="680" cy="305" r="32" fill="#222" style={{ stroke: 'rgb(var(--accent2-rgb))' }} strokeWidth="1.5"/>
             <circle cx="680" cy="305" r="10" fill="#111"/>
-            <ellipse cx="845" cy="220" rx="20" ry="14" fill="rgba(212,43,43,0.6)" filter="url(#glow)"/>
+            <ellipse cx="845" cy="220" rx="20" ry="14" style={{ fill: 'rgba(var(--accent2-rgb), 0.6)' }} filter="url(#glow)"/>
             <circle cx="350" cy="130" r="3" fill="rgba(100,180,255,0.6)"/>
             <circle cx="420" cy="105" r="2" fill="rgba(100,180,255,0.5)"/>
             <circle cx="560" cy="100" r="2.5" fill="rgba(100,180,255,0.55)"/>
