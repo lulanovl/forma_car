@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import ServicesSection from './ServicesSection.jsx';
 import BookingForm from './BookingForm.jsx';
+import Icon from '../../components/Icon.jsx';
 
 function CountUp({ to, decimals = 0, suffix = '', duration = 1800 }) {
   const [val, setVal] = useState(0);
@@ -232,11 +233,11 @@ export default function SitePage({ config }) {
           </div>
           <div className="footer-col">
             <div className="footer-col-title">Контакты</div>
-            <ul>
-              <li><a href="#">📍 {address}</a></li>
-              <li><a href={phone ? `tel:${phone.replace(/\s/g, '')}` : '#'}>📞 {phone}</a></li>
-              <li><a href="#">💬 WhatsApp</a></li>
-              <li><a href="#">📷 Instagram</a></li>
+            <ul className="footer-contacts">
+              <li><a href="#"><Icon name="pin" size={16} />{address}</a></li>
+              <li><a href={phone ? `tel:${phone.replace(/\s/g, '')}` : '#'}><Icon name="phone" size={16} />{phone}</a></li>
+              <li><a href="#"><Icon name="chat" size={16} />WhatsApp</a></li>
+              <li><a href="#"><Icon name="instagram" size={16} />Instagram</a></li>
             </ul>
           </div>
         </div>
