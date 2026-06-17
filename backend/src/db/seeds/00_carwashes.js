@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { resetSequences } = require('../sequences');
 
 /**
  * Phase 0 seed: the existing FormaCar data becomes carwash #1, plus the first
@@ -60,4 +61,8 @@ exports.seed = async function (knex) {
       carwash_id: u.carwash_id,
     });
   }
+
+  // This seed runs on deploy (seed:bootstrap) where 08_fix_sequences does NOT,
+  // so realign its own sequences here — otherwise creating carwash #2 collides.
+  await resetSequences(knex, ['carwashes', 'users']);
 };
