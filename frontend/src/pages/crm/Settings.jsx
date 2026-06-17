@@ -111,12 +111,16 @@ export default function Settings() {
         <div style={grid}>
           {Text('name', 'Название мойки')}
           {Color('primary_color', 'Основной цвет', '#e60000')}
-          {Color('accent_color', 'Акцентный цвет', '#bf0000')}
+          {Color('accent_color', 'Дополнительный цвет', '#bf0000')}
           {Text('hero_title', 'Заголовок на сайте')}
           {Text('hero_subtitle', 'Подзаголовок на сайте')}
           {Text('phone', 'Телефон')}
           {Text('address', 'Адрес')}
           {Text('logo_url', 'URL логотипа')}
+        </div>
+        <div style={{ color: 'var(--gray)', fontSize: '.8rem' }}>
+          Основной цвет — кнопки, ссылки, свечения и рамки. Дополнительный — вторичные подсветки и градиенты.
+          Выбирай контрастный к тёмному фону (не белый/очень светлый).
         </div>
       </div>
 

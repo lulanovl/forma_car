@@ -6,7 +6,7 @@ const fieldBox = { background: 'var(--dark)', border: '1px solid var(--border)',
 const labelCol = { display: 'flex', flexDirection: 'column', gap: '.35rem' };
 const labelTxt = { fontSize: '.8rem', color: 'var(--gray)' };
 
-const EMPTY = { slug: '', name: '', admin_login: '', admin_password: '', primary_color: '#e60000' };
+const EMPTY = { slug: '', name: '', admin_login: '', admin_password: '', primary_color: '#e60000', accent_color: '#bf0000' };
 
 export default function PlatformPage({ onBackSite, onLogout }) {
   const [carwashes, setCarwashes] = useState([]);
@@ -91,6 +91,11 @@ export default function PlatformPage({ onBackSite, onLogout }) {
           <label style={labelCol}>
             <span style={labelTxt}>Основной цвет</span>
             <input type="color" value={form.primary_color} onChange={e => field('primary_color', e.target.value)}
+              style={{ ...fieldBox, height: '42px', cursor: 'pointer', padding: '.2rem' }} />
+          </label>
+          <label style={labelCol}>
+            <span style={labelTxt}>Дополнительный цвет</span>
+            <input type="color" value={form.accent_color} onChange={e => field('accent_color', e.target.value)}
               style={{ ...fieldBox, height: '42px', cursor: 'pointer', padding: '.2rem' }} />
           </label>
         </div>

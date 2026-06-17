@@ -1,6 +1,10 @@
 // Apply a carwash's brand colors by overriding the global CSS variables the whole
-// UI is built on (--red is the accent used across site + CRM). Brand-only theming:
-// we remap the existing palette, we don't restyle layouts.
+// UI is built on. Two configurable colors, both meaningful:
+//   primary  → --accent-rgb : the dominant accent (buttons, lines, glows, borders,
+//              section tints). All rgba(var(--accent-rgb), …) variants follow it.
+//   secondary→ --accent2-rgb: the secondary tint family + the dark end of gradients
+//              (so buttons/gradients read as a two-tone primary→secondary).
+// Brand-only theming: we remap the palette, we don't restyle layouts.
 
 function hexToRgb(hex) {
   if (typeof hex !== 'string') return null;
@@ -15,14 +19,16 @@ export function applyTheme(config) {
 
   const primary = config.primary_color;
   if (primary) {
-    root.style.setProperty('--red', primary);
     const rgb = hexToRgb(primary);
-    if (rgb) {
-      root.style.setProperty('--red-glow', `rgba(${rgb.join(',')},0.4)`);
-      root.style.setProperty('--border-red', `rgba(${rgb.join(',')},0.35)`);
-    }
+    root.style.setProperty('--red', primary);
+    if (rgb) root.style.setProperty('--accent-rgb', rgb.join(', '));
+    // --red-glow / --border-red derive from --accent-rgb in CSS, no need to set them
   }
 
-  const accent = config.accent_color;
-  if (accent) root.style.setProperty('--red-dark', accent);
+  const secondary = config.accent_color;
+  if (secondary) {
+    const rgb = hexToRgb(secondary);
+    root.style.setProperty('--red-dark', secondary);
+    if (rgb) root.style.setProperty('--accent2-rgb', rgb.join(', '));
+  }
 }
