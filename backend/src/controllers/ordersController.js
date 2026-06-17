@@ -1,5 +1,6 @@
-const db     = require('../db/knex');
-const events = require('../events');
+const db       = require('../db/knex');
+const events   = require('../events');
+const telegram = require('../telegram');
 
 const MAX_CARS_PER_SLOT = 6; // 6 wash bays
 
@@ -131,6 +132,9 @@ exports.create = async (req, res, next) => {
       time_slot:    order.time_slot,
     });
 
+    // Fire-and-forget Telegram notification (per-carwash token; never blocks the response)
+    telegram.notifyNewOrder(carwashId, order);
+
     res.status(201).json(order);
   } catch (err) {
     next(err);
@@ -220,6 +224,9 @@ exports.createAdmin = async (req, res, next) => {
       date:         order.date,
       time_slot:    order.time_slot,
     });
+
+    // Fire-and-forget Telegram notification (per-carwash token; never blocks the response)
+    telegram.notifyNewOrder(carwashId, order);
 
     res.status(201).json(order);
   } catch (err) {
