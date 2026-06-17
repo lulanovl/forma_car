@@ -1,6 +1,10 @@
 const db     = require('../db/knex');
 const bcrypt = require('bcryptjs');
 
+// The carwash whose slug backs the no-subdomain fallback in resolveTenant.
+// Deactivating it would 404 every fallback request (incl. login on localhost/apex).
+const DEFAULT_SLUG = process.env.DEFAULT_CARWASH_SLUG || 'formacar';
+
 // Public-safe-ish carwash view for the platform owner (who legitimately sees all).
 function publicCarwash(c) {
   return {
@@ -127,6 +131,15 @@ exports.updateCarwash = async (req, res, next) => {
     if (Object.keys(upd).length === 0) {
       return res.status(400).json({ error: 'Нет полей для обновления' });
     }
+
+    const carwash = await db('carwashes').where({ id }).first();
+    if (!carwash) return res.status(404).json({ error: 'Мойка не найдена' });
+
+    // Guard: never deactivate the default carwash — it backs the login fallback.
+    if ('is_active' in upd && !upd.is_active && carwash.slug === DEFAULT_SLUG) {
+      return res.status(400).json({ error: 'Нельзя выключить мойку по умолчанию — на неё завязан вход без поддомена' });
+    }
+
     upd.updated_at = new Date().toISOString();
 
     const changed = await db('carwashes').where({ id }).update(upd);
