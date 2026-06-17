@@ -6,8 +6,9 @@ import Clients from './Clients.jsx';
 import Staff from './Staff.jsx';
 import Prices from './Prices.jsx';
 import Analytics from './Analytics.jsx';
+import Settings from './Settings.jsx';
 
-const PANEL_LABELS = { dash: 'Дашборд', orders: 'Заказы', cal: 'Расписание', clients: 'Клиенты', analytics: 'Аналитика', staff: 'Персонал', prices: 'Прайс-лист' };
+const PANEL_LABELS = { dash: 'Дашборд', orders: 'Заказы', cal: 'Расписание', clients: 'Клиенты', analytics: 'Аналитика', staff: 'Персонал', prices: 'Прайс-лист', settings: 'Настройки' };
 
 export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, onNewOrder, onOpenChecklist, onBackSite }) {
   const [loadedPanels, setLoadedPanels] = useState(new Set(['dash']));
@@ -45,6 +46,7 @@ export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, o
     { id: 'analytics', ico: '📈', label: 'Аналитика' },
     { id: 'staff',     ico: '🔧', label: 'Персонал' },
     { id: 'prices',    ico: '💰', label: 'Прайс-лист' },
+    { id: 'settings',  ico: '⚙️', label: 'Настройки' },
   ];
 
   return (
@@ -125,6 +127,9 @@ export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, o
         <button className={`crm-btn ${panel === 'prices' ? 'active' : ''}`} onClick={() => onPanelChange('prices')}>
           <span className="ico">💰</span>Прайс-лист
         </button>
+        <button className={`crm-btn ${panel === 'settings' ? 'active' : ''}`} onClick={() => onPanelChange('settings')}>
+          <span className="ico">⚙️</span>Настройки
+        </button>
         <div style={{ height: '1px', background: 'var(--border)', margin: '1rem 0' }} />
         <button className="crm-btn" onClick={onBackSite}>
           <span className="ico">←</span>На сайт
@@ -184,6 +189,12 @@ export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, o
         <div id="p-prices" className={`crm-panel ${panel === 'prices' ? 'on' : ''}`}>
           {loadedPanels.has('prices') && (
             <Prices isActive={panel === 'prices'} />
+          )}
+        </div>
+
+        <div id="p-settings" className={`crm-panel ${panel === 'settings' ? 'on' : ''}`}>
+          {loadedPanels.has('settings') && (
+            <Settings isActive={panel === 'settings'} />
           )}
         </div>
       </main>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getToken, isAuthenticated } from './utils/auth.js';
 import { getCarwashConfig } from './api/index.js';
+import { applyTheme } from './utils/theme.js';
 import { toastInfo, toastError } from './components/toast.js';
 import SitePage from './pages/site/SitePage.jsx';
 import CrmPage from './pages/crm/CrmPage.jsx';
@@ -26,6 +27,7 @@ export default function App() {
     getCarwashConfig()
       .then((cfg) => {
         setSiteConfig(cfg);
+        applyTheme(cfg);
         if (cfg?.name) document.title = cfg.name;
       })
       .catch(() => { /* fall back to built-in defaults in SitePage */ });

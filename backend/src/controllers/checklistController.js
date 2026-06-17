@@ -78,6 +78,10 @@ async function ensureOrderChecklist(orderId, carwashId, trx = db) {
   const existing = await trx('order_checklist').where({ order_id: orderId }).first();
   if (existing) return; // уже инициализирован
 
+  // Respect the carwash-level switch: if checklists are disabled, don't create one.
+  const carwash = await trx('carwashes').where({ id: carwashId }).first();
+  if (carwash && !carwash.checklist_enabled) return;
+
   const items = await trx('checklist_items')
     .where({ is_active: true, carwash_id: carwashId })
     .orderBy('order_num');
