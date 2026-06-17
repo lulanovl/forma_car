@@ -10,7 +10,7 @@ import Settings from './Settings.jsx';
 
 const PANEL_LABELS = { dash: 'Дашборд', orders: 'Заказы', cal: 'Расписание', clients: 'Клиенты', analytics: 'Аналитика', staff: 'Персонал', prices: 'Прайс-лист', settings: 'Настройки' };
 
-export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, onNewOrder, onOpenChecklist, onBackSite }) {
+export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, onNewOrder, onOpenChecklist, onBackSite, onLogout }) {
   const [loadedPanels, setLoadedPanels] = useState(new Set(['dash']));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [ordersFilter, setOrdersFilter] = useState('all');
@@ -93,6 +93,9 @@ export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, o
         <button className="crm-btn" onClick={() => { onBackSite(); setDrawerOpen(false); }}>
           <span className="ico">←</span>На сайт
         </button>
+        <button className="crm-btn" onClick={() => { onLogout(); setDrawerOpen(false); }}>
+          <span className="ico">⎋</span>Выйти
+        </button>
       </div>
 
       <aside className="crm-sidebar" id="crm-sidebar">
@@ -133,6 +136,9 @@ export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, o
         <div style={{ height: '1px', background: 'var(--border)', margin: '1rem 0' }} />
         <button className="crm-btn" onClick={onBackSite}>
           <span className="ico">←</span>На сайт
+        </button>
+        <button className="crm-btn" onClick={onLogout}>
+          <span className="ico">⎋</span>Выйти
         </button>
       </aside>
 

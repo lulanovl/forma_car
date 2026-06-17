@@ -15,10 +15,17 @@ function homeViewForRole() {
   return getRole() === 'platform_owner' ? 'platform' : 'crm';
 }
 
+// Does the current URL ask for the admin panel? Supports /crm and legacy #crm.
+function urlWantsCrm() {
+  return window.location.pathname === '/crm' || window.location.hash === '#crm';
+}
+
 export default function App() {
+  // Capture the entry intent once, before any effect rewrites the URL.
+  const [wantsCrm] = useState(urlWantsCrm);
   const [view, setView] = useState(() => {
     const saved = sessionStorage.getItem('fc_view');
-    if ((saved === 'crm' || saved === 'platform') && isAuthenticated()) return homeViewForRole();
+    if ((wantsCrm || saved === 'crm' || saved === 'platform') && isAuthenticated()) return homeViewForRole();
     return 'site';
   });
   const [crmPanel, setCrmPanel] = useState(() => sessionStorage.getItem('fc_panel') || 'dash');
@@ -66,13 +73,21 @@ export default function App() {
     return () => source.close();
   }, [view]);
 
-  // Open CRM when navigated to /#crm
+  // Deep-link entry to /crm (or legacy #crm). If authenticated, the initial view
+  // already opened the panel; otherwise prompt login. Runs once on mount.
   useEffect(() => {
-    if (window.location.hash === '#crm') {
-      window.location.hash = '';
-      handleCrmClick();
-    }
+    if (!wantsCrm) return;
+    if (window.location.hash) window.history.replaceState(null, '', '/crm');
+    if (!isAuthenticated()) setLoginOpen(true);
   }, []);
+
+  // Keep the address bar in sync with the view: /crm for any admin view, / on the site.
+  useEffect(() => {
+    const target = view === 'site' ? '/' : '/crm';
+    if (window.location.pathname !== target) {
+      window.history.replaceState(null, '', target);
+    }
+  }, [view]);
 
   // Listen for auth expiry from API client
   useEffect(() => {
@@ -84,14 +99,6 @@ export default function App() {
     window.addEventListener('auth:expired', handler);
     return () => window.removeEventListener('auth:expired', handler);
   }, []);
-
-  function handleCrmClick() {
-    if (isAuthenticated()) {
-      setView(homeViewForRole());
-    } else {
-      setLoginOpen(true);
-    }
-  }
 
   function handleLogout() {
     clearToken();
@@ -123,6 +130,7 @@ export default function App() {
           onNewOrder={() => setNewOrderOpen(true)}
           onOpenChecklist={handleOpenChecklist}
           onBackSite={() => setView('site')}
+          onLogout={handleLogout}
         />
       )}
       {view === 'checklist' && (
