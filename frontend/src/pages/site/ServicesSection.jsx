@@ -1,15 +1,46 @@
 import { useState, useEffect } from 'react';
 import { getServices } from '../../api/index.js';
+import Icon from '../../components/Icon.jsx';
 
-const SERVICE_FEATURES = {
-  'Стандартная мойка':    ['Мойка кузова под давлением', 'Чистка дисков и арок', 'Сушка микрофиброй', 'Мойка стёкол'],
-  'Трёхфазная мойка':     ['Предварительная пена-мойка', 'Основная мойка', 'Финальная полировка', 'Чистка дисков', 'Мойка стёкол'],
-  'Премиум мойка':        ['Полная наружная мойка', 'Химчистка салона', 'Полировка кузова', 'Обработка резины', 'Ароматизация'],
-  'Химчистка':            ['Пол и коврики', 'Сиденья', 'Потолок', 'Дверные карты', 'Торпедо', 'Глубокое пятновыведение'],
-  'Полировка + керамика': ['Машинная полировка', 'Нанокерамическое покрытие', 'Защита на 2–3 года', 'Финальная инспекция'],
-  'Мойка днища':          ['Мойка под высоким давлением', 'Удаление грязи и соли'],
-  'Антикор днища':        ['Нанесение антикора', 'Защита от ржавчины', 'Полная обработка'],
+// Per-service presentation: a short, scannable benefit line (mobile users read
+// little — one clear sentence beats a bullet list), an icon used as the photo
+// fallback, and the image slug. Drop a photo at /services/{slug}.jpg and the
+// card upgrades from the icon fallback to the photo automatically.
+const SERVICE_META = {
+  'Стандартная мойка':    { slug: 'standard',   icon: 'droplet',     benefit: 'Кузов, диски, стёкла и сушка микрофиброй' },
+  'Трёхфазная мойка':     { slug: 'three-phase', icon: 'layers',      benefit: 'Пена, мойка и полировка в три этапа' },
+  'Премиум мойка':        { slug: 'premium',     icon: 'sparkles',    benefit: 'Наружная мойка, салон и полировка кузова' },
+  'Химчистка':            { slug: 'dryclean',    icon: 'spray',       benefit: 'Глубокая чистка салона до текстиля' },
+  'Полировка + керамика': { slug: 'ceramic',     icon: 'shield',      benefit: 'Нанокерамика и защита кузова на 2–3 года' },
+  'Мойка днища':          { slug: 'underbody',   icon: 'droplets',    benefit: 'Высокое давление, удаление соли и грязи' },
+  'Антикор днища':        { slug: 'anticor',     icon: 'shieldCheck', benefit: 'Защита днища от ржавчины и коррозии' },
 };
+
+function minPrice(pricing) {
+  if (!pricing || !pricing.length) return null;
+  return pricing.reduce((m, p) => Math.min(m, Number(p.price)), Infinity);
+}
+
+// Image slot with graceful fallback: shows the photo if it loads, otherwise a
+// large branded icon on a tinted gradient.
+function ServiceMedia({ slug, icon, popular }) {
+  const [ok, setOk] = useState(true);
+  return (
+    <div className="svc-card-media">
+      {slug && ok && (
+        <img
+          className="svc-card-img"
+          src={`/services/${slug}.jpg`}
+          alt=""
+          loading="lazy"
+          onError={() => setOk(false)}
+        />
+      )}
+      <span className="svc-card-icon"><Icon name={icon} size={56} strokeWidth={1.4} /></span>
+      {popular && <span className="svc-card-badge">Популярный</span>}
+    </div>
+  );
+}
 
 export default function ServicesSection({ onPick }) {
   const [services, setServices] = useState([]);
@@ -38,52 +69,33 @@ export default function ServicesSection({ onPick }) {
 
   return (
     <div id="services-grid">
-      <div className="services-grid">
-        {services.map((svc, i) => {
-          const features = SERVICE_FEATURES[svc.name] || [];
-          const isPopular = svc.name === 'Трёхфазная мойка';
+      <div className="svc-grid">
+        {services.map((svc) => {
+          const meta = SERVICE_META[svc.name] || { slug: null, icon: 'droplet', benefit: svc.description };
+          const popular = svc.name === 'Трёхфазная мойка';
+          const from = minPrice(svc.pricing);
 
           return (
-            <div
+            <button
               key={svc.id}
-              className="service-card"
-              style={isPopular ? { borderTop: '3px solid var(--red)' } : {}}
+              type="button"
+              className={`svc-card${popular ? ' svc-card-popular' : ''}`}
               onClick={() => onPick(svc)}
             >
-              {isPopular && (
-                <div style={{ fontFamily: 'Rajdhani,sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'var(--red)', marginBottom: '0.5rem' }}>
-                  ★ ПОПУЛЯРНЫЙ
+              <ServiceMedia slug={meta.slug} icon={meta.icon} popular={popular} />
+              <div className="svc-card-body">
+                <h3 className="svc-card-title">{svc.name}</h3>
+                <p className="svc-card-benefit">{meta.benefit}</p>
+                <div className="svc-card-foot">
+                  <span className="svc-card-price">
+                    {from != null
+                      ? <>от {from.toLocaleString('ru-RU')} <small>сом</small></>
+                      : <small>Цена по запросу</small>}
+                  </span>
+                  <span className="svc-card-cta">Выбрать<Icon name="back" size={16} className="svc-card-cta-arrow" /></span>
                 </div>
-              )}
-              <span className="service-num">0{i + 1}</span>
-              <div className="service-name">{svc.name}</div>
-              <div className="service-desc">{svc.description}</div>
-              <ul className="service-features">
-                {features.map((f, fi) => <li key={fi}>{f}</li>)}
-              </ul>
-              <div className="service-footer">
-                {svc.pricing && svc.pricing.length ? (
-                  <div className="service-pricing">
-                    {svc.pricing.map((p) => (
-                      <div key={p.car_type_id} className="service-pricing-row">
-                        <span className="ct-name">{p.car_type_icon || ''} {p.car_type_name}</span>
-                        <span className="ct-price">{p.is_from_price ? 'от ' : ''}{Number(p.price).toLocaleString('ru-RU')}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="service-pricing">
-                    <div style={{ color: 'var(--gray)', fontSize: '0.8rem' }}>Цена по запросу</div>
-                  </div>
-                )}
-                <button
-                  className="btn-pick"
-                  onClick={(e) => { e.stopPropagation(); onPick(svc); }}
-                >
-                  Выбрать
-                </button>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
