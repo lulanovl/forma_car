@@ -7,6 +7,7 @@ import Staff from './Staff.jsx';
 import Prices from './Prices.jsx';
 import Analytics from './Analytics.jsx';
 import Settings from './Settings.jsx';
+import Icon from '../../components/Icon.jsx';
 
 const PANEL_LABELS = { dash: 'Дашборд', orders: 'Заказы', cal: 'Расписание', clients: 'Клиенты', analytics: 'Аналитика', staff: 'Персонал', prices: 'Прайс-лист', settings: 'Настройки' };
 
@@ -39,14 +40,14 @@ export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, o
   }
 
   const navItems = [
-    { id: 'dash',      ico: '📊', label: 'Дашборд' },
-    { id: 'orders',    ico: '📋', label: 'Заказы' },
-    { id: 'cal',       ico: '📅', label: 'Расписание' },
-    { id: 'clients',   ico: '👥', label: 'Клиенты' },
-    { id: 'analytics', ico: '📈', label: 'Аналитика' },
-    { id: 'staff',     ico: '🔧', label: 'Персонал' },
-    { id: 'prices',    ico: '💰', label: 'Прайс-лист' },
-    { id: 'settings',  ico: '⚙️', label: 'Настройки' },
+    { id: 'dash',      ico: 'dashboard', label: 'Дашборд' },
+    { id: 'orders',    ico: 'orders',    label: 'Заказы' },
+    { id: 'cal',       ico: 'calendar',  label: 'Расписание' },
+    { id: 'clients',   ico: 'clients',   label: 'Клиенты' },
+    { id: 'analytics', ico: 'analytics', label: 'Аналитика' },
+    { id: 'staff',     ico: 'staff',     label: 'Персонал' },
+    { id: 'prices',    ico: 'prices',    label: 'Прайс-лист' },
+    { id: 'settings',  ico: 'settings',  label: 'Настройки' },
   ];
 
   return (
@@ -74,27 +75,27 @@ export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, o
           <button className="cnd-close" onClick={() => setDrawerOpen(false)}>✕</button>
         </div>
         <button className="crm-btn crm-btn-add" onClick={() => { onNewOrder(); setDrawerOpen(false); }}>
-          <span className="ico">+</span>Новый заказ
+          <Icon name="plus" className="ico" />Новый заказ
         </button>
         <div className="crm-group-label">Главное</div>
         {navItems.slice(0, 5).map(item => (
           <button key={item.id} className={`crm-btn ${panel === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>
-            <span className="ico">{item.ico}</span>{item.label}
+            <Icon name={item.ico} className="ico" />{item.label}
           </button>
         ))}
         <div style={{ height: '1px', background: 'var(--border)', margin: '1rem 0' }} />
         <div className="crm-group-label">Настройки</div>
         {navItems.slice(5).map(item => (
           <button key={item.id} className={`crm-btn ${panel === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>
-            <span className="ico">{item.ico}</span>{item.label}
+            <Icon name={item.ico} className="ico" />{item.label}
           </button>
         ))}
         <div style={{ height: '1px', background: 'var(--border)', margin: '1rem 0' }} />
         <button className="crm-btn" onClick={() => { onBackSite(); setDrawerOpen(false); }}>
-          <span className="ico">←</span>На сайт
+          <Icon name="back" className="ico" />На сайт
         </button>
         <button className="crm-btn" onClick={() => { onLogout(); setDrawerOpen(false); }}>
-          <span className="ico">⎋</span>Выйти
+          <Icon name="logout" className="ico" />Выйти
         </button>
       </div>
 
@@ -104,41 +105,41 @@ export default function CrmPage({ panel, onPanelChange, refreshKey, onRefresh, o
           <div className="sub">CRM · Панель</div>
         </div>
         <button className="crm-btn crm-btn-add" onClick={onNewOrder}>
-          <span className="ico">+</span>Новый заказ
+          <Icon name="plus" className="ico" />Новый заказ
         </button>
         <div className="crm-group-label">Главное</div>
         <button className={`crm-btn ${panel === 'dash' ? 'active' : ''}`} onClick={() => onPanelChange('dash')}>
-          <span className="ico">📊</span>Дашборд
+          <Icon name="dashboard" className="ico" />Дашборд
         </button>
         <button className={`crm-btn ${panel === 'orders' ? 'active' : ''}`} onClick={() => onPanelChange('orders')}>
-          <span className="ico">📋</span>Заказы
+          <Icon name="orders" className="ico" />Заказы
         </button>
         <button className={`crm-btn ${panel === 'cal' ? 'active' : ''}`} onClick={() => onPanelChange('cal')}>
-          <span className="ico">📅</span>Расписание
+          <Icon name="calendar" className="ico" />Расписание
         </button>
         <button className={`crm-btn ${panel === 'clients' ? 'active' : ''}`} onClick={() => onPanelChange('clients')}>
-          <span className="ico">👥</span>Клиенты
+          <Icon name="clients" className="ico" />Клиенты
         </button>
         <button className={`crm-btn ${panel === 'analytics' ? 'active' : ''}`} onClick={() => onPanelChange('analytics')}>
-          <span className="ico">📈</span>Аналитика
+          <Icon name="analytics" className="ico" />Аналитика
         </button>
         <div style={{ height: '1px', background: 'var(--border)', margin: '1rem 0' }} />
         <div className="crm-group-label">Настройки</div>
         <button className={`crm-btn ${panel === 'staff' ? 'active' : ''}`} onClick={() => onPanelChange('staff')}>
-          <span className="ico">🔧</span>Персонал
+          <Icon name="staff" className="ico" />Персонал
         </button>
         <button className={`crm-btn ${panel === 'prices' ? 'active' : ''}`} onClick={() => onPanelChange('prices')}>
-          <span className="ico">💰</span>Прайс-лист
+          <Icon name="prices" className="ico" />Прайс-лист
         </button>
         <button className={`crm-btn ${panel === 'settings' ? 'active' : ''}`} onClick={() => onPanelChange('settings')}>
-          <span className="ico">⚙️</span>Настройки
+          <Icon name="settings" className="ico" />Настройки
         </button>
         <div style={{ height: '1px', background: 'var(--border)', margin: '1rem 0' }} />
         <button className="crm-btn" onClick={onBackSite}>
-          <span className="ico">←</span>На сайт
+          <Icon name="back" className="ico" />На сайт
         </button>
         <button className="crm-btn" onClick={onLogout}>
-          <span className="ico">⎋</span>Выйти
+          <Icon name="logout" className="ico" />Выйти
         </button>
       </aside>
 
