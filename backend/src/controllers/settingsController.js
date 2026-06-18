@@ -11,6 +11,7 @@ const EDITABLE = [
   'hero_image_url',
   'phone',
   'address',
+  'instagram_url',
   'telegram_bot_token',
   'telegram_chat_id',
   'checklist_enabled',
