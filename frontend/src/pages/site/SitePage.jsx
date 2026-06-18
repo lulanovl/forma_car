@@ -35,7 +35,6 @@ function CountUp({ to, decimals = 0, suffix = '', duration = 1800 }) {
 export default function SitePage({ config }) {
   const [preSelectService, setPreSelectService] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [hideCta, setHideCta] = useState(false);
 
   // Per-carwash branding with safe fallbacks to the built-in FormaCar defaults.
   const brandName = config?.name || 'FormaCar';
@@ -56,16 +55,6 @@ export default function SitePage({ config }) {
     setMenuOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   }
-
-  // Hide the sticky mobile CTA while the booking section is on screen so it
-  // doesn't compete with the form's own submit button.
-  useEffect(() => {
-    const el = document.getElementById('booking');
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => setHideCta(e.isIntersecting), { threshold: 0.15 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   return (
     <>
@@ -227,12 +216,6 @@ export default function SitePage({ config }) {
           <p>© 2025 <span className="footer-red">{brandName}</span> Premium Car Wash. Все права защищены.</p>
         </div>
       </footer>
-
-      {/* Sticky mobile booking CTA — thumb-zone; only on phones (<600px) where
-          the nav "Записаться" is hidden. Slides away over the booking section. */}
-      <div className={`mobile-cta-bar${hideCta ? ' mobile-cta-hidden' : ''}`}>
-        <button className="mobile-cta-btn" onClick={() => scrollToBooking()}>Записаться онлайн</button>
-      </div>
     </>
   );
 }

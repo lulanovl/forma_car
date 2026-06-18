@@ -411,23 +411,6 @@ footer { background:var(--dark); border-top:1px solid var(--border-light); paddi
 .footer-bottom p { font-size:0.75rem; color:#333; }
 .footer-red { color:var(--red); }
 
-/* ─── STICKY MOBILE CTA (phones only; thumb-zone booking button) ─── */
-.mobile-cta-bar {
-  display:none; position:fixed; left:0; right:0; bottom:0; z-index:180;
-  padding:0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom, 0px));
-  background:linear-gradient(180deg, rgba(5,5,5,0) 0%, rgba(5,5,5,0.92) 30%);
-  pointer-events:none;
-  transition:transform 0.3s ease, opacity 0.3s ease;
-}
-.mobile-cta-hidden { transform:translateY(140%); opacity:0; }
-.mobile-cta-btn {
-  pointer-events:auto; width:100%; min-height:54px;
-  font-family:'Rajdhani',sans-serif; font-size:1rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
-  background:var(--red); color:var(--white); border:none; cursor:pointer; border-radius:8px;
-  box-shadow:0 6px 24px rgba(0,0,0,0.5); transition:background 0.2s;
-}
-.mobile-cta-btn:active { background:var(--red-dark); }
-
 /* ══════════════════════════════
    CRM PANEL
 ══════════════════════════════ */
@@ -953,11 +936,6 @@ tr:hover td { background:rgba(var(--accent2-rgb), 0.03); }
   /* Site */
   .hero { padding:88px 1.5rem 132px; }
   .hero h1 { font-size:3.5rem; }
-  /* 2x2: keep the glass panel, draw subtle internal cross-hairlines only */
-  .stats-bar { grid-template-columns:repeat(2,1fr); }
-  .stat-item { border-right:none; }
-  .stat-item:nth-child(odd) { border-right:1px solid rgba(255,255,255,0.08); }
-  .stat-item:nth-child(-n+2) { border-bottom:1px solid rgba(255,255,255,0.08); }
   .section { padding:3.5rem 1.5rem; }
   .form-grid { grid-template-columns:1fr; }
   .form-field.full { grid-column:span 1; }
@@ -1029,9 +1007,9 @@ tr:hover td { background:rgba(var(--accent2-rgb), 0.03); }
     flex-shrink:0;
     border-top:1px solid var(--border);
   }
-  .stat-item { padding:1.3rem 0.5rem; }
-  .stat-num { font-size:1.75rem; margin-bottom:0.35rem; }
-  .stat-label { font-size:0.6rem; letter-spacing:0.12em; }
+  .stat-item { padding:1.1rem 0.3rem; }
+  .stat-num { font-size:1.45rem; margin-bottom:0.3rem; }
+  .stat-label { font-size:0.52rem; letter-spacing:0.04em; }
 
   /* ── Sections ── */
   .section { padding:2.5rem 1rem; }
@@ -1070,11 +1048,8 @@ tr:hover td { background:rgba(var(--accent2-rgb), 0.03); }
   .an-period-label { font-size:1.2rem; min-width:120px; }
   .an-day-bars { height:90px; gap:1px; }
 
-  /* ── Sticky mobile CTA ── */
-  .mobile-cta-bar { display:block; }
-
   /* ── Footer ── */
-  footer { padding:2rem 1rem 6.5rem; } /* extra bottom space so the sticky CTA never covers footer content */
+  footer { padding:2rem 1rem 1.5rem; }
   .footer-top { grid-template-columns:1fr; gap:1.5rem; }
   .footer-desc { max-width:100%; }
   .footer-bottom { flex-direction:column; gap:0.5rem; text-align:center; padding-top:1rem; }
