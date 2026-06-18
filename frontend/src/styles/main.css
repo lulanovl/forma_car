@@ -396,7 +396,7 @@ nav ul a:hover { color:var(--red); }
 
 /* ─── FOOTER ─── */
 footer { background:var(--dark); border-top:1px solid var(--border-light); padding:3rem 3rem 2rem; }
-.footer-top { display:grid; grid-template-columns:2fr 1fr 1fr; gap:3rem; margin-bottom:2rem; }
+.footer-top { display:grid; grid-template-columns:2fr 1fr; gap:3rem; margin-bottom:2rem; }
 .footer-logo { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.1em; margin-bottom:0.8rem; display:block; }
 .footer-logo .forma { color:var(--red); }
 .footer-desc { font-size:0.82rem; color:var(--gray); line-height:1.7; max-width:240px; }
