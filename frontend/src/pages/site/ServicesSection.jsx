@@ -49,14 +49,7 @@ export default function ServicesSection({ onPick }) {
 
   useEffect(() => {
     getServices()
-      .then((data) => {
-        setServices(data);
-        // Update footer services list
-        const footerList = document.getElementById('footer-services-list');
-        if (footerList) {
-          footerList.innerHTML = data.map(s => `<li><a href="#">${s.name}</a></li>`).join('');
-        }
-      })
+      .then(setServices)
       .catch(() => setError('Не удалось загрузить услуги'));
   }, []);
 

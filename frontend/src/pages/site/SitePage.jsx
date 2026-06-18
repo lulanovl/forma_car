@@ -208,10 +208,6 @@ export default function SitePage({ config }) {
             <div className="footer-desc">Premium Car Wash. Профессиональный уход за вашим автомобилем. Запись онлайн — без очередей.</div>
           </div>
           <div className="footer-col">
-            <div className="footer-col-title">Услуги</div>
-            <ul id="footer-services-list"><li><a href="#">Стандартная мойка</a></li></ul>
-          </div>
-          <div className="footer-col">
             <div className="footer-col-title">Контакты</div>
             <ul className="footer-contacts">
               <li><a href="#"><Icon name="pin" size={16} />{address}</a></li>
