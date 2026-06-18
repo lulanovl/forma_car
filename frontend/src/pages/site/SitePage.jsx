@@ -43,6 +43,15 @@ export default function SitePage({ config }) {
   const phone = config?.phone || '+996 — — —';
   const address = config?.address || 'Бишкек, Кыргызстан';
 
+  // WhatsApp is the same number as the phone — wa.me needs digits only.
+  const phoneDigits = (config?.phone || '').replace(/\D/g, '');
+  const hasWhatsapp = phoneDigits.length >= 9;
+  // Instagram: accept a full URL or a bare @handle / handle.
+  const instagramRaw = (config?.instagram_url || '').trim();
+  const instagramUrl = instagramRaw
+    ? (/^https?:\/\//i.test(instagramRaw) ? instagramRaw : `https://instagram.com/${instagramRaw.replace(/^@/, '')}`)
+    : '';
+
   function scrollToBooking(svc = null) {
     if (svc) setPreSelectService(svc);
     setMenuOpen(false);
@@ -206,9 +215,13 @@ export default function SitePage({ config }) {
             <div className="footer-col-title">Контакты</div>
             <ul className="footer-contacts">
               <li><a href="#"><Icon name="pin" size={16} />{address}</a></li>
-              <li><a href={phone ? `tel:${phone.replace(/\s/g, '')}` : '#'}><Icon name="phone" size={16} />{phone}</a></li>
-              <li><a href="#"><Icon name="chat" size={16} />WhatsApp</a></li>
-              <li><a href="#"><Icon name="instagram" size={16} />Instagram</a></li>
+              <li><a href={hasWhatsapp ? `tel:+${phoneDigits}` : '#'}><Icon name="phone" size={16} />{phone}</a></li>
+              {hasWhatsapp && (
+                <li><a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noopener noreferrer"><Icon name="chat" size={16} />WhatsApp</a></li>
+              )}
+              {instagramUrl && (
+                <li><a href={instagramUrl} target="_blank" rel="noopener noreferrer"><Icon name="instagram" size={16} />Instagram</a></li>
+              )}
             </ul>
           </div>
         </div>

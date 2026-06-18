@@ -104,6 +104,7 @@ export default function Settings() {
         hero_image_url: form.hero_image_url,
         phone: form.phone,
         address: form.address,
+        instagram_url: form.instagram_url,
         telegram_bot_token: form.telegram_bot_token,
         telegram_chat_id: form.telegram_chat_id,
         checklist_enabled: form.checklist_enabled,
@@ -171,8 +172,9 @@ export default function Settings() {
           {Color('accent_color', 'Дополнительный цвет', '#bf0000')}
           {Text('hero_title', 'Заголовок на сайте')}
           {Text('hero_subtitle', 'Подзаголовок на сайте')}
-          {Text('phone', 'Телефон')}
+          {Text('phone', 'Телефон (он же WhatsApp)')}
           {Text('address', 'Адрес')}
+          {Text('instagram_url', 'Instagram (ссылка или @ник)')}
           {Text('logo_url', 'URL логотипа')}
         </div>
         <div style={{ color: 'var(--gray)', fontSize: '.8rem' }}>

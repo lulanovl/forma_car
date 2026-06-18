@@ -21,6 +21,7 @@ exports.getConfig = async (req, res, next) => {
       hero_image_url:    c.hero_image_url,
       phone:             c.phone,
       address:           c.address,
+      instagram_url:     c.instagram_url,
       checklist_enabled: !!c.checklist_enabled,
     });
   } catch (err) {
