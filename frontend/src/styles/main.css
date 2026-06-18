@@ -107,7 +107,7 @@ nav ul a:hover { color:var(--red); }
 .btn-ghost:hover { border-color:var(--red); color:var(--red); }
 /* Hero background photo slot (graceful: 404 simply doesn't paint) + dark scrim
    so the headline stays readable whether or not a photo is present. */
-.hero-bg { position:absolute; inset:0; z-index:0; background:url('/hero.jpg') center/cover no-repeat; }
+.hero-bg { position:absolute; inset:0; z-index:0; background-position:center; background-size:cover; background-repeat:no-repeat; }
 .hero-bg::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(5,5,5,0.72) 0%, rgba(5,5,5,0.78) 45%, rgba(5,5,5,0.92) 100%); }
 /* Secondary hero action — a quiet text link so the primary CTA stays the one
    obvious tap target. */

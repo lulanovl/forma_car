@@ -61,6 +61,15 @@ export const updateOrderChecklist      = (orderId, items, checked_by) =>
 export const getSettings    = ()     => api.get('/settings');
 export const updateSettings = (data) => api.patch('/settings', data);
 
+// Image upload (admin) → returns { url } from Vercel Blob. `kind` just namespaces
+// the stored file (e.g. 'hero', 'service').
+export const uploadImage = (file, kind) => {
+  const fd = new FormData();
+  fd.append('file', file);
+  if (kind) fd.append('kind', kind);
+  return api.upload('/upload', fd);
+};
+
 // Platform owner (super admin) — manage all carwashes
 export const getCarwashes       = ()         => api.get('/admin/carwashes');
 export const createCarwash      = (data)     => api.post('/admin/carwashes', data);

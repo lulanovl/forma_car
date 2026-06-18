@@ -14,6 +14,7 @@ router.use('/slots',               require('./slots'));
 router.use('/dashboard',           require('./dashboard'));
 router.use('/analytics',           require('./analytics'));
 router.use('/settings',            require('./settings'));
+router.use('/upload',              require('./upload'));
 router.use('/admin',               require('./platform'));
 router.use('/events',              require('./events'));
 

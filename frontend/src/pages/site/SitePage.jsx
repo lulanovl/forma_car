@@ -99,10 +99,10 @@ export default function SitePage({ config }) {
 
       {/* HERO */}
       <section className="hero">
-        {/* Background photo slot: drop /hero.jpg into public/ and it appears.
-            A missing file simply doesn't paint (no broken-image icon), so the
-            dark base + faint orbs remain a clean fallback. */}
-        <div className="hero-bg" />
+        {/* Background photo: owner-uploaded (config.hero_image_url) or the
+            bundled /hero.jpg default. A missing file simply doesn't paint (no
+            broken-image icon), so the dark base + faint orbs stay a clean fallback. */}
+        <div className="hero-bg" style={{ backgroundImage: `url(${config?.hero_image_url || '/hero.jpg'})` }} />
         <div className="orb orb-1" />
         <div className="orb orb-2" />
         <div className="hero-content">

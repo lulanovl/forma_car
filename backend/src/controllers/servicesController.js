@@ -87,6 +87,7 @@ exports.update = async (req, res, next) => {
     if (description !== undefined) upd.description = description;
     if (duration_min !== undefined) upd.duration_min = duration_min;
     if (is_active !== undefined) upd.is_active = is_active;
+    if (req.body.image_url !== undefined) upd.image_url = req.body.image_url;
 
     await db('services').where({ id, carwash_id: req.carwashId }).update(upd);
 
