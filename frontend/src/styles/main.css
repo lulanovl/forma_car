@@ -1001,10 +1001,14 @@ tr:hover td { background:rgba(var(--accent2-rgb), 0.03); }
   .hero-actions { flex-direction:column; gap:0.9rem; }
   .hero-actions .btn-primary,
   .hero-actions .btn-ghost { width:100%; text-align:center; padding:1rem 1rem; clip-path:none; }
-  /* Stats bar: remove absolute, become natural flex item at bottom */
+  /* Stats bar: remove absolute, become natural flex item at bottom.
+     align-self:stretch overrides the hero's align-items:center so the bar spans
+     full width instead of shrinking to its content and centering. */
   .stats-bar {
     position:static;
     flex-shrink:0;
+    align-self:stretch;
+    width:100%;
     border-top:1px solid var(--border);
   }
   .stat-item { padding:1.1rem 0.3rem; }
