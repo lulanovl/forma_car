@@ -22,15 +22,16 @@ function minPrice(pricing) {
 }
 
 // Image slot with graceful fallback: shows the photo if it loads, otherwise a
-// large branded icon on a tinted gradient.
-function ServiceMedia({ slug, icon, popular }) {
+// large branded icon on a tinted gradient. `src` is the owner-uploaded photo if
+// set, else the bundled per-service default; null/failed → icon only.
+function ServiceMedia({ src, icon, popular }) {
   const [ok, setOk] = useState(true);
   return (
     <div className="svc-card-media">
-      {slug && ok && (
+      {src && ok && (
         <img
           className="svc-card-img"
-          src={`/services/${slug}.jpg`}
+          src={src}
           alt=""
           loading="lazy"
           onError={() => setOk(false)}
@@ -74,6 +75,8 @@ export default function ServicesSection({ onPick }) {
           const meta = SERVICE_META[svc.name] || { slug: null, icon: 'droplet', benefit: svc.description };
           const popular = svc.name === 'Трёхфазная мойка';
           const from = minPrice(svc.pricing);
+          // Owner-uploaded photo wins; otherwise the bundled per-service default.
+          const imgSrc = svc.image_url || (meta.slug ? `/services/${meta.slug}.jpg` : null);
 
           return (
             <button
@@ -82,7 +85,7 @@ export default function ServicesSection({ onPick }) {
               className={`svc-card${popular ? ' svc-card-popular' : ''}`}
               onClick={() => onPick(svc)}
             >
-              <ServiceMedia slug={meta.slug} icon={meta.icon} popular={popular} />
+              <ServiceMedia src={imgSrc} icon={meta.icon} popular={popular} />
               <div className="svc-card-body">
                 <h3 className="svc-card-title">{svc.name}</h3>
                 <p className="svc-card-benefit">{meta.benefit}</p>

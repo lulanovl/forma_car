@@ -8,6 +8,7 @@ const EDITABLE = [
   'accent_color',
   'hero_title',
   'hero_subtitle',
+  'hero_image_url',
   'phone',
   'address',
   'telegram_bot_token',

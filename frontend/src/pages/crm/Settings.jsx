@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   getSettings, updateSettings,
   getChecklistItems, createChecklistItem, deleteChecklistItem,
+  getAllServices, updateService, uploadImage,
 } from '../../api/index.js';
 import { applyTheme } from '../../utils/theme.js';
 import { toastSuccess, toastError } from '../../components/toast.js';
@@ -9,9 +10,52 @@ import { toastSuccess, toastError } from '../../components/toast.js';
 const fieldBox = { background: 'var(--dark)', border: '1px solid var(--border)', color: 'var(--white)', padding: '.6rem .8rem', borderRadius: '8px' };
 const grid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: '1rem', padding: '1rem 0' };
 
+// Reusable photo picker: uploads the chosen file to Vercel Blob (via the API),
+// then hands the resulting URL back through onChange. Shows a live preview and a
+// remove action. Toasts only on upload failure — callers handle success.
+function ImageField({ value, onChange, kind, aspect = '16 / 10', width = 110 }) {
+  const [busy, setBusy] = useState(false);
+  async function onPick(e) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setBusy(true);
+    try {
+      const { url } = await uploadImage(file, kind);
+      onChange(url);
+    } catch (err) {
+      toastError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div style={{ display: 'flex', gap: '0.9rem', alignItems: 'center', flexWrap: 'wrap' }}>
+      <div style={{ width, aspectRatio: aspect, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: 'var(--dark)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {value
+          ? <img src={value} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          : <span style={{ color: 'var(--gray)', fontSize: '.7rem' }}>нет фото</span>}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+        <label className="btn-save-price" style={{ margin: 0, cursor: busy ? 'default' : 'pointer', opacity: busy ? 0.6 : 1 }}>
+          {busy ? 'ЗАГРУЗКА…' : (value ? 'Заменить фото' : 'Загрузить фото')}
+          <input type="file" accept="image/*" onChange={onPick} disabled={busy} style={{ display: 'none' }} />
+        </label>
+        {value && !busy && (
+          <button type="button" onClick={() => onChange(null)}
+            style={{ background: 'none', border: 'none', color: 'var(--gray)', cursor: 'pointer', fontSize: '.78rem', textAlign: 'left', padding: 0 }}>
+            Убрать фото
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Settings() {
   const [form, setForm] = useState(null);
   const [items, setItems] = useState([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -23,9 +67,10 @@ export default function Settings() {
     setLoading(true);
     setError(null);
     try {
-      const [s, it] = await Promise.all([getSettings(), getChecklistItems()]);
+      const [s, it, svcs] = await Promise.all([getSettings(), getChecklistItems(), getAllServices()]);
       setForm(s);
       setItems(it);
+      setServices(svcs);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -34,6 +79,17 @@ export default function Settings() {
   }
 
   function field(k, v) { setForm(prev => ({ ...prev, [k]: v })); }
+
+  // Service photos persist immediately (they're separate from the settings form).
+  async function setServiceImage(id, url) {
+    try {
+      await updateService(id, { image_url: url });
+      setServices(prev => prev.map(s => (s.id === id ? { ...s, image_url: url } : s)));
+      toastSuccess(url ? 'Фото услуги обновлено' : 'Фото услуги убрано');
+    } catch (err) {
+      toastError(err.message);
+    }
+  }
 
   async function save() {
     setSaving(true);
@@ -45,6 +101,7 @@ export default function Settings() {
         accent_color: form.accent_color,
         hero_title: form.hero_title,
         hero_subtitle: form.hero_subtitle,
+        hero_image_url: form.hero_image_url,
         phone: form.phone,
         address: form.address,
         telegram_bot_token: form.telegram_bot_token,
@@ -121,6 +178,32 @@ export default function Settings() {
         <div style={{ color: 'var(--gray)', fontSize: '.8rem' }}>
           Основной цвет — кнопки, ссылки, свечения и рамки. Дополнительный — вторичные подсветки и градиенты.
           Выбирай контрастный к тёмному фону (не белый/очень светлый).
+        </div>
+      </div>
+
+      {/* Фото */}
+      <div className="crm-box" style={{ border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
+        <div className="crm-box-title">Фото</div>
+
+        <div style={{ padding: '1rem 0', display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+          <span style={{ fontSize: '.8rem', color: 'var(--gray)' }}>Фон главного экрана (hero)</span>
+          <ImageField
+            value={form.hero_image_url} kind="hero" aspect="16 / 9" width={160}
+            onChange={(url) => { field('hero_image_url', url); toastSuccess(url ? 'Фото загружено — нажмите «Сохранить настройки»' : 'Фото убрано — нажмите «Сохранить настройки»'); }}
+          />
+        </div>
+
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+          <span style={{ fontSize: '.8rem', color: 'var(--gray)' }}>Фото услуг (на карточках) — сохраняются сразу</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '.8rem' }}>
+            {services.map(svc => (
+              <div key={svc.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                <span style={{ fontWeight: 600 }}>{svc.name}</span>
+                <ImageField value={svc.image_url} kind="service" onChange={(url) => setServiceImage(svc.id, url)} />
+              </div>
+            ))}
+            {services.length === 0 && <div style={{ color: 'var(--gray)', fontSize: '.85rem' }}>Услуг нет.</div>}
+          </div>
         </div>
       </div>
 

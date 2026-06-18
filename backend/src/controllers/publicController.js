@@ -18,6 +18,7 @@ exports.getConfig = async (req, res, next) => {
       accent_color:      c.accent_color,
       hero_title:        c.hero_title,
       hero_subtitle:     c.hero_subtitle,
+      hero_image_url:    c.hero_image_url,
       phone:             c.phone,
       address:           c.address,
       checklist_enabled: !!c.checklist_enabled,
