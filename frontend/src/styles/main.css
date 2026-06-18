@@ -139,32 +139,8 @@ nav ul a:hover { color:var(--red); }
 
 /* ─── SERVICES ─── */
 .services-bg { background:var(--dark); }
-.services-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-.service-card { background:var(--glass-bg); border:1px solid var(--border-light); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); padding:2.5rem; position:relative; overflow:hidden; cursor:pointer; transition:transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease, border-color 0.3s; border-radius:4px; }
-.service-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--red), rgba(var(--accent-rgb), 0.4)); transform:scaleX(0); transform-origin:left; transition:transform 0.4s cubic-bezier(0.16,1,0.3,1); }
-.service-card::after { content:''; position:absolute; bottom:-60px; right:-60px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, var(--red-glow) 0%, transparent 65%); opacity:0; transition:opacity 0.4s; }
-.service-card:hover { transform:translateY(-4px); box-shadow:0 18px 48px rgba(0,0,0,0.5); border-color:rgba(var(--accent-rgb), 0.22); }
-.service-card:hover::before { transform:scaleX(1); }
-.service-card:hover::after { opacity:0.55; }
-.service-num { font-family:'Bebas Neue',sans-serif; font-size:4rem; line-height:1; color:rgba(var(--accent-rgb), 0.45); margin-bottom:1rem; display:block; letter-spacing:0.05em; }
-.service-name { font-family:'Rajdhani',sans-serif; font-size:1.4rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.8rem; color:var(--white); }
-.service-desc { font-size:0.85rem; line-height:1.7; color:var(--gray); margin-bottom:1.8rem; }
-.service-features { list-style:none; margin-bottom:2rem; }
-.service-features li { font-size:0.82rem; color:#888; padding:0.4rem 0; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.6rem; transition:color 0.25s; }
-.service-card:hover .service-features li { color:#aaa; }
-.service-features li::before { content:'▸'; color:var(--red); font-size:0.6rem; flex-shrink:0; }
-.service-footer { display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
 
-/* Pricing table inside service card */
-.service-pricing { font-size:0.82rem; color:var(--gray); line-height:2; }
-.service-pricing-row { display:flex; justify-content:space-between; align-items:baseline; gap:0.5rem; }
-.service-pricing-row .ct-name { color:var(--silver); }
-.service-pricing-row .ct-price { color:var(--red); font-family:'Bebas Neue',sans-serif; font-size:1.45rem; letter-spacing:0.03em; line-height:1; }
-
-.btn-pick { font-family:'Rajdhani',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; background:none; border:1px solid var(--border-red); color:var(--red); padding:0.55rem 1.1rem; cursor:pointer; transition:all 0.25s; clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%); }
-.btn-pick:hover { background:var(--red); color:var(--white); border-color:var(--red); box-shadow:0 0 20px var(--red-glow); }
-
-/* ─── SERVICE CARDS v2 (mobile-first, image-led) ─── */
+/* ─── SERVICE CARDS (mobile-first, image-led) ─── */
 .svc-grid { display:grid; grid-template-columns:1fr; gap:14px; }
 .svc-card {
   display:flex; flex-direction:column; text-align:left;
@@ -982,7 +958,6 @@ tr:hover td { background:rgba(var(--accent2-rgb), 0.03); }
   .stat-item { border-right:none; }
   .stat-item:nth-child(odd) { border-right:1px solid rgba(255,255,255,0.08); }
   .stat-item:nth-child(-n+2) { border-bottom:1px solid rgba(255,255,255,0.08); }
-  .services-grid { grid-template-columns:1fr; }
   .section { padding:3.5rem 1.5rem; }
   .form-grid { grid-template-columns:1fr; }
   .form-field.full { grid-column:span 1; }
@@ -1062,15 +1037,6 @@ tr:hover td { background:rgba(var(--accent2-rgb), 0.03); }
   .section { padding:2.5rem 1rem; }
   .section-title { font-size:clamp(1.8rem, 8vw, 2.5rem); margin-bottom:1.5rem; }
   .section-label { font-size:0.65rem; }
-
-  /* ── Service cards ── */
-  .services-grid { grid-template-columns:1fr; gap:8px; }
-  .service-card { padding:1.5rem 1.2rem; }
-  .service-num { font-size:3rem; }
-  .service-icon { font-size:1.6rem; margin-bottom:0.6rem; }
-  .service-name { font-size:1.2rem; }
-  .service-footer { flex-direction:column; align-items:stretch; gap:0.8rem; }
-  .btn-pick { width:100%; text-align:center; padding:0.7rem; }
 
   /* ── Booking form ── */
   .booking-wrap { border-left:none; border-right:none; }
